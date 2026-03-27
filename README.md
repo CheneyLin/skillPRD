@@ -24,4 +24,6 @@ Guides novice PMs through a 7-step agile workflow: dialogue-based requirement ga
 
 # 参考资料
 
- * 主要内容来自：https://github.com/chyxin071-sys/Agile-PM-Workflow
+ * 主要内容 https://github.com/chyxin071-sys/Agile-PM-Workflow
+ * SKILL格式规范 https://agentskills.io/home
+ * openai SKILL 最佳实践 https://developers.openai.com/codex/skills

@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>商品限购策略原型 v1.4</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+  <style>
+    body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; background:#f5f7fa; color:#1f2329; }
+    .el-container { height: 100vh; }
+    .el-header { background: #1f2329; color: #fff; display: flex; align-items: center; padding: 0 20px; }
+    .el-aside { width: 200px; background: #fff; }
+    .el-main { padding: 20px; }
+    .table-header { margin-bottom: 16px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .active-focus { box-shadow: 0 0 0 3px rgba(255,125,0,0.3); border-radius: 6px; }
+    .form-card { background: #fff; border-radius: 8px; padding: 24px; margin-bottom: 20px; }
+    .form-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #ebeef5; }
+    .form-section { margin-bottom: 20px; }
+    .form-section-title { font-size: 14px; font-weight: 600; margin-bottom: 12px; color: #303133; }
+    .warning-box { background: #fff3e0; border: 1px solid #ffb74d; border-radius: 4px; padding: 12px 16px; margin: 16px 0; }
+    .warning-title { color: #e65100; font-weight: 600; margin-bottom: 4px; }
+    .el-breadcrumb { margin: 8px 0 12px; }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <el-container>
+      <el-header>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <i class="el-icon-s-custom" style="color: #ff7d00;"></i>
+          <span>商品限购策略原型 v1.4</span>
+        </div>
+        <div style="margin-left: auto; display: flex; gap: 8px; align-items: center;">
+          <i class="el-icon-user"></i>
+          <span>{{ userNickname }}</span>
+        </div>
+      </el-header>
+      <el-container>
+        <el-aside width="200px">
+          <el-menu :default-active="menuActive" unique-opened>
+            <el-submenu index="3">
+              <template slot="title">
+                <i class="el-icon-goods"></i>
+                <span>商品平台</span>
+              </template>
+              <el-menu-item index="3-1" @click="go('#crowd/list')">人群包策略</el-menu-item>
+              <el-menu-item index="3-2" @click="go('#strategy/list')">限购策略</el-menu-item>
+            </el-submenu>
+          </el-menu>
+        </el-aside>
+        <el-main>
+          <el-breadcrumb separator="/">
+            <el-breadcrumb-item>商品平台</el-breadcrumb-item>
+            <el-breadcrumb-item v-if="route==='strategy/list'">限购策略</el-breadcrumb-item>
+            <el-breadcrumb-item v-if="route==='strategy/create'">限购策略新建/编辑</el-breadcrumb-item>
+            <el-breadcrumb-item v-if="route==='crowd/list'">人群包策略</el-breadcrumb-item>
+            <el-breadcrumb-item v-if="route==='crowd/create'">人群包新建/编辑</el-breadcrumb-item>
+          </el-breadcrumb>
+
+          <!-- 限购策略列表 -->
+          <div v-if="route==='strategy/list'">
+            <div class="table-header">
+              <el-input v-model="filters.strategyName" placeholder="策略名称/ID" style="width: 240px;"></el-input>
+              <el-select v-model="filters.strategyType" placeholder="策略类型" style="width: 180px;">
+                <el-option label="SPU限购" value="SPU"></el-option>
+                <el-option label="SKU限购" value="SKU"></el-option>
+              </el-select>
+              <el-button type="primary" @click="applyFilters">查询</el-button>
+              <el-button @click="resetFilters">重置</el-button>
+              <div style="margin-left:auto;">
+                <el-button type="primary" @click="go('#strategy/create')">创建策略</el-button>
+              </div>
+            </div>
+            <el-table :data="filteredStrategies" style="width: 100%" border>
+              <el-table-column prop="id" label="ID" width="120"></el-table-column>
+              <el-table-column prop="name" label="策略名称" min-width="160"></el-table-column>
+              <el-table-column prop="typeLabel" label="策略类型" width="120"></el-table-column>
+              <el-table-column prop="bindProducts" label="商品名称" min-width="200">
+                <template slot-scope="scope">
+                  <span v-if="scope.row.bindProducts && scope.row.bindProducts.length > 0">
+                    <el-tag v-for="(p, i) in scope.row.bindProducts.slice(0, 3)" :key="i" style="margin-right: 4px;">{{ p }}</el-tag>
+                    <span v-if="scope.row.bindProducts.length > 3" style="color: #909399;">...</span>
+                  </span>
+                  <span v-else>-</span>
+                </template>
+              </el-table-column>
+              <el-table-column prop="periodLabel" label="周期" width="220"></el-table-column>
+              <el-table-column prop="limitQty" label="数量上限" width="120"></el-table-column>
+              <el-table-column prop="crowdName" label="人群包" width="160"></el-table-column>
+              <el-table-column prop="statusLabel" label="状态" width="100"></el-table-column>
+              <el-table-column prop="updatedBy" label="创建人/更新时间" min-width="220">
+                <template slot-scope="scope">
+                  <div>{{ scope.row.createdBy }} / {{ scope.row.updatedAt }}</div>
+                </template>
+              </el-table-column>
+              <el-table-column label="操作" width="160">
+                <template slot-scope="scope">
+                  <el-link type="primary" @click="previewStrategy(scope.row)">查看</el-link>
+                  <el-link type="primary" @click="editStrategy(scope.row)">编辑</el-link>
+                  <el-switch v-model="scope.row.enabled" active-text="启用" inactive-text="停用" @change="toggleStrategy(scope.row)"></el-switch>
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
+
+          <!-- 限购策略新建/编辑 - 单页表单 -->
+          <div v-if="route==='strategy/create'" class="form-card">
+            <div class="form-title">限购策略 {{ editMode ? '编辑' : '新建' }}</div>
+            
+            <!-- 基本信息 -->
+            <div class="form-section">
+              <div class="form-section-title">基本信息</div>
+              <el-form label-width="120px">
+                <el-form-item label="策略类型" required>
+                  <el-radio-group v-model="create.type" @change="onTypeChange">
+                    <el-radio label="SPU">SPU限购</el-radio>
+                    <el-radio label="SKU">SKU限购</el-radio>
+                  </el-radio-group>
+                  <div style="color:#909399; font-size:12px; margin-top:4px;">切换类型后需重新选择商品</div>
+                </el-form-item>
+              </el-form>
+            </div>
+
+            <!-- 商品选择 -->
+            <div class="form-section">
+              <div class="form-section-title">商品选择 <span style="color:red">*</span></div>
+              <el-form label-width="120px">
+                <el-form-item label="输入商品ID">
+                  <el-input v-model="create.productInput" @keyup.enter.native="queryProduct" placeholder="输入商品ID后按回车查询" style="width:300px;"></el-input>
+                  <el-button @click="queryProduct" style="margin-left:8px;">查询</el-button>
+                  <div style="color:#909399; font-size:12px; margin-top:4px;">输入商品ID后实时查询对应的商品名称</div>
+                </el-form-item>
+                <el-form-item label="查询结果" v-if="create.queryResult">
+                  <!-- SPU限购 -->
+                  <div v-if="create.type==='SPU'">
+                    <el-radio-group v-model="create.selectedSpu">
+                      <el-radio :label="create.queryResult.id">
+                        {{ create.queryResult.name }}（SPU）
+                      </el-radio>
+                    </el-radio-group>
+                    <div style="color:#909399; font-size:12px; margin-top:4px;">选择1个SPU</div>
+                  </div>
+                  <!-- SKU限购 -->
+                  <div v-else>
+                    <div style="margin-bottom:8px; color:#909399; font-size:12px;">SKU限购：列出SPU下的全部SKU，提供勾选</div>
+                    <el-table :data="skuList" height="250" @selection-change="onSkuSelect" border style="max-width:600px;">
+                      <el-table-column type="selection" width="50"></el-table-column>
+                      <el-table-column prop="id" label="SKU ID" width="140"></el-table-column>
+                      <el-table-column prop="name" label="SKU名称" min-width="200"></el-table-column>
+                      <el-table-column prop="spuId" label="所属SPU" width="120"></el-table-column>
+                    </el-table>
+                    <div style="color:#909399; font-size:12px; margin-top:4px;">已选择 {{ create.selectedSkus.length }} 个SKU，最多选择100个</div>
+                  </div>
+                </el-form-item>
+                <el-form-item label="已选商品" v-if="create.selectedProducts.length>0">
+                  <el-tag v-for="p in create.selectedProducts" :key="p.id" style="margin:4px;">{{ p.name }}</el-tag>
+                </el-form-item>
+              </el-form>
+            </div>
+
+            <!-- 限购周期与数量 -->
+            <div class="form-section">
+              <div class="form-section-title">限购周期与数量 <span style="color:red">*</span></div>
+              <el-form label-width="120px">
+                <el-form-item label="周期类型">
+                  <el-radio-group v-model="create.periodType">
+                    <el-radio label="permanent">永久</el-radio>
+                    <el-radio label="one_year">一年</el-radio>
+                    <el-radio label="custom">自定义</el-radio>
+                  </el-radio-group>
+                </el-form-item>
+                <el-form-item label="自定义周期" v-if="create.periodType==='custom'">
+                  <el-date-picker v-model="create.startTime" type="datetime" placeholder="开始时间" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
+                  <span style="margin:0 8px;">至</span>
+                  <el-date-picker v-model="create.endTime" type="datetime" placeholder="结束时间" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
+                  <div style="color:#909399; font-size:12px; margin-top:4px;">结束时间必须大于开始时间</div>
+                </el-form-item>
+                <el-form-item label="数量上限">
+                  <el-input-number v-model="create.limitQty" :min="1" :max="9999" label="每用户每周期件数"></el-input-number>
+                  <span style="margin-left:8px;">件/每用户每周期</span>
+                  <div style="color:#909399; font-size:12px; margin-top:4px;">取值范围：1-9999</div>
+                </el-form-item>
+              </el-form>
+            </div>
+
+          <!-- 人群包 -->
+          <div class="form-section">
+            <div class="form-section-title">人群包</div>
+            <el-form label-width="120px">
+              <el-form-item label="选择人群包">
+                <el-select v-model="create.crowdId" placeholder="不选择则对所有用户生效" style="width:300px;" clearable>
+                  <el-option v-for="c in crowdPackages" :key="c.id" :label="c.name" :value="c.id"></el-option>
+                </el-select>
+                <div style="color:#909399; font-size:12px; margin-top:4px;">选填，不选择则对所有用户生效</div>
+              </el-form-item>
+            </el-form>
+          </div>
+
+          <!-- 用户提示 -->
+          <div class="form-section">
+            <div class="form-section-title">用户提示</div>
+            <el-form label-width="120px">
+              <el-form-item label="提示文案">
+                <el-input type="textarea" :rows="2" v-model="create.userTip" placeholder="用于用户因限购策略无法下单时的提示，如：您已达到购买上限"></el-input>
+                <div style="color:#909399; font-size:12px; margin-top:4px;">选填，用于在用户无法下单时展示提示信息</div>
+              </el-form-item>
+            </el-form>
+          </div>
+
+          <!-- 状态 -->
+            <div class="form-section">
+              <div class="form-section-title">状态</div>
+              <el-form label-width="120px">
+                <el-form-item label="启用/停用">
+                  <el-switch v-model="create.enabled" active-text="启用" inactive-text="停用"></el-switch>
+                </el-form-item>
+              </el-form>
+            </div>
+
+            <!-- 并行策略提示 -->
+            <div class="warning-box">
+              <div class="warning-title">⚠️ 并行策略提示</div>
+              <p style="margin:0; color:#e65100;">同商品存在其他策略将<strong>并行生效</strong>，不做覆盖或合并。</p>
+              <p style="margin:8px 0 0; color:#ff7d00;">SPU策略与SKU策略<strong>不合并计数</strong>。</p>
+            </div>
+
+            <!-- 操作按钮 -->
+            <div style="text-align:center; margin-top:24px;">
+              <el-button @click="go('#strategy/list')">取 消</el-button>
+              <el-button type="primary" @click="submitStrategy">保存</el-button>
+            </div>
+          </div>
+
+          <!-- 人群包列表 -->
+          <div v-if="route==='crowd/list'">
+            <div class="table-header">
+              <el-input v-model="filters.crowdName" placeholder="人群包名称/ID" style="width: 240px;"></el-input>
+              <el-button type="primary" @click="applyFilters">查询</el-button>
+              <el-button @click="resetFilters">重置</el-button>
+              <div style="margin-left:auto;">
+                <el-button type="primary" @click="go('#crowd/create')">创建人群包</el-button>
+              </div>
+            </div>
+            <el-table :data="crowdPackages" style="width: 100%" border>
+              <el-table-column prop="id" label="ID" width="120"></el-table-column>
+              <el-table-column prop="name" label="名称" min-width="160"></el-table-column>
+              <el-table-column prop="bindProducts" label="商品名称" min-width="200">
+                <template slot-scope="scope">
+                  <span v-if="scope.row.bindProducts && scope.row.bindProducts.length > 0">
+                    <el-tag v-for="(p, i) in scope.row.bindProducts.slice(0, 3)" :key="i" style="margin-right: 4px;">{{ p }}</el-tag>
+                    <span v-if="scope.row.bindProducts.length > 3" style="color: #909399;">...</span>
+                  </span>
+                  <span v-else>-</span>
+                </template>
+              </el-table-column>
+              <el-table-column prop="joinTags" label="加入条件" min-width="220"></el-table-column>
+              <el-table-column prop="initLabel" label="初始化" width="120"></el-table-column>
+              <el-table-column prop="statusLabel" label="状态" width="100"></el-table-column>
+              <el-table-column prop="updatedBy" label="创建人/更新时间" min-width="220">
+                <template slot-scope="scope">
+                  <div>{{ scope.row.createdBy }} / {{ scope.row.updatedAt }}</div>
+                </template>
+              </el-table-column>
+              <el-table-column label="操作" width="160">
+                <template slot-scope="scope">
+                  <el-link type="primary" @click="previewCrowd(scope.row)">查看</el-link>
+                  <el-link type="primary" @click="editCrowd(scope.row)">编辑</el-link>
+                  <el-switch v-model="scope.row.enabled" active-text="启用" inactive-text="停用"></el-switch>
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
+
+          <!-- 人群包新建/编辑 - 单页表单 -->
+          <div v-if="route==='crowd/create'" class="form-card">
+            <div class="form-title">人群包 {{ crowdEditMode ? '编辑' : '新建' }}</div>
+            
+            <!-- 基本信息 -->
+            <div class="form-section">
+              <div class="form-section-title">基本信息</div>
+              <el-form label-width="120px">
+                <el-form-item label="名称" required>
+                  <el-input v-model="crowdCreate.name" placeholder="请输入人群包名称" style="width:300px;"></el-input>
+                </el-form-item>
+              </el-form>
+            </div>
+
+            <!-- 绑定商品 -->
+            <div class="form-section">
+              <div class="form-section-title">绑定商品 <span style="color:red">*</span></div>
+              <el-form label-width="120px">
+                <el-form-item label="绑定类型">
+                  <el-radio-group v-model="crowdCreate.bindType">
+                    <el-radio label="SPU">SPU</el-radio>
+                    <el-radio label="SKU">SKU</el-radio>
+                  </el-radio-group>
+                  <div style="color:#909399; font-size:12px; margin-top:4px;">选择后将仅保留对应类型的ID</div>
+                </el-form-item>
+                <el-form-item label="批量ID">
+                  <el-input type="textarea" :rows="4" v-model="crowdCreate.idText" placeholder="一行一个ID"></el-input>
+                  <div style="color:#909399; font-size:12px; margin-top:8px;">输入{{ crowdCreate.bindType }} ID，一行一个</div>
+                </el-form-item>
+              </el-form>
+            </div>
+
+            <!-- 加入条件 -->
+            <div class="form-section">
+              <div class="form-section-title">加入条件 <span style="color:red">*</span></div>
+              <el-form label-width="120px">
+                <el-form-item label="条件类型">
+                  <el-radio-group v-model="crowdCreate.joinCondition">
+                    <el-radio label="支付完成">支付完成</el-radio>
+                    <el-radio label="签收完成">签收完成</el-radio>
+                    <el-radio label="订单完成">订单完成</el-radio>
+                  </el-radio-group>
+                </el-form-item>
+              </el-form>
+            </div>
+
+            <!-- 初始化配置 -->
+            <div class="form-section">
+              <div class="form-section-title">初始化配置</div>
+              <el-form label-width="120px">
+                <el-form-item label="退款剔除">
+                  <el-switch v-model="crowdCreate.refundExclude"></el-switch>
+                  <div style="color:#909399; font-size:12px; margin-top:4px;">开启后自动剔除退款用户</div>
+                </el-form-item>
+                <el-form-item label="初始化范围">
+                  <span>固定：过去365天历史购买用户</span>
+                </el-form-item>
+                <el-form-item label="执行方式">
+                  <el-radio-group v-model="crowdCreate.initMode">
+                    <el-radio label="立即执行">立即执行</el-radio>
+                    <el-radio label="手动执行">手动执行</el-radio>
+                  </el-radio-group>
+                </el-form-item>
+              </el-form>
+            </div>
+
+            <!-- 状态 -->
+            <div class="form-section">
+              <div class="form-section-title">状态</div>
+              <el-form label-width="120px">
+                <el-form-item label="启用/停用">
+                  <el-switch v-model="crowdCreate.enabled" active-text="启用" inactive-text="停用"></el-switch>
+                </el-form-item>
+              </el-form>
+            </div>
+
+            <!-- 操作按钮 -->
+            <div style="text-align:center; margin-top:24px;">
+              <el-button @click="go('#crowd/list')">取 消</el-button>
+              <el-button type="primary" @click="confirmCrowdCreate">保存</el-button>
+            </div>
+          </div>
+        </el-main>
+      </el-container>
+    </el-container>
+  </div>
+
+  <script src="https://unpkg.com/vue@2.6.14/dist/vue.js"></script>
+  <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+  <script>
+    new Vue({
+      el: '#app',
+      data() {
+        return {
+          route: 'strategy/list',
+          menuActive: '3-2',
+          editMode: false,
+          crowdEditMode: false,
+          focusKey: null,
+          userNickname: 'shanjia001',
+          filters: { strategyName: '', strategyType: '', crowdName: '' },
+          strategies: [
+            { id: 'S0001', name: '限购-SPU-年度1件', type: 'SPU', typeLabel: 'SPU限购', bindCount: 3, periodLabel: '一年', limitQty: 1, crowdName: '包A', statusLabel: '启用', enabled: true, createdBy: 'admin', updatedAt: '2026-03-25 10:00:00' },
+            { id: 'K0007', name: '限购-SKU-促销3件', type: 'SKU', typeLabel: 'SKU限购', bindCount: 5, periodLabel: '自定义', limitQty: 3, crowdName: '包B', statusLabel: '停用', enabled: false, createdBy: 'op01', updatedAt: '2026-03-24 18:22:10' }
+          ],
+          create: {
+            type: '',
+            productInput: '',
+            queryResult: null,
+            selectedSpu: '',
+            selectedSkus: [],
+            selectedProducts: [],
+            periodType: 'permanent',
+            startTime: '',
+            endTime: '',
+            limitQty: 1,
+            crowdId: '',
+            userTip: '',
+            enabled: true
+          },
+          invalidIds: [],
+          productDialog: false,
+          productQuery: '',
+          productList: [
+            { id: '10001', name: '示例商品A', kind: 'SPU' },
+            { id: '10002', name: '示例商品B', kind: 'SPU' },
+            { id: '20001', name: '示例SKU X', kind: 'SKU' },
+            { id: '20002', name: '示例SKU Y', kind: 'SKU' }
+          ],
+          selectedProductsTmp: [],
+          crowdPackages: [
+            { id: 'C001', name: '包A', bindProducts: ['示例商品A', '示例商品B', '示例SKU X'], joinTags: '支付/签收', initLabel: '已执行', statusLabel: '启用', enabled: true, createdBy: 'admin', updatedAt: '2026-03-20 12:00:00' },
+            { id: 'C002', name: '包B', bindProducts: ['示例SKU Y', '示例商品A'], joinTags: '订单完成', initLabel: '未执行', statusLabel: '停用', enabled: false, createdBy: 'op01', updatedAt: '2026-03-18 09:30:00' }
+          ],
+          crowdCreate: {
+            name: '',
+            bindType: 'SPU',
+            idText: '',
+            ids: [],
+            joinCondition: '',
+            refundExclude: false,
+            initMode: '手动执行',
+            enabled: true
+          }
+        }
+      },
+      computed: {
+        filteredStrategies() {
+          return this.strategies.filter(s => {
+            const byName = this.filters.strategyName ? (s.name.includes(this.filters.strategyName) || s.id.includes(this.filters.strategyName)) : true;
+            const byType = this.filters.strategyType ? s.type === this.filters.strategyType : true;
+            return byName && byType;
+          });
+        },
+        productListFiltered() {
+          return this.productList.filter(p => {
+            const okType = this.create.type ? (p.kind === this.create.type) : true;
+            const byQuery = this.productQuery ? (p.name.includes(this.productQuery) || p.id.includes(this.productQuery)) : true;
+            return okType && byQuery;
+          });
+        },
+        canProceedPeriod() {
+          if (!this.create.limitQty || this.create.limitQty < 1 || this.create.limitQty > 9999) return false;
+          if (this.create.periodType === 'custom') {
+            if (!this.create.startTime || !this.create.endTime) return false;
+            return new Date(this.create.endTime).getTime() > new Date(this.create.startTime).getTime();
+          }
+          return true;
+        }
+      },
+      watch: {
+        focusKey() {
+          this.$nextTick(this.scrollToFocus);
+        },
+        route() {
+          this.$nextTick(this.scrollToFocus);
+        }
+      },
+      created() {
+        this.initRoute();
+      },
+      methods: {
+        initRoute() {
+          const hash = window.location.hash.replace('#','');
+          const params = new URLSearchParams(window.location.search);
+          this.focusKey = params.get('focus');
+          if (hash === 'strategy/create') { 
+            this.route = 'strategy/create'; 
+            this.menuActive = '3-2'; 
+            this.editMode = false;
+          }
+          else if (hash === 'crowd/list') { 
+            this.route = 'crowd/list'; 
+            this.menuActive = '3-1'; 
+          }
+          else if (hash === 'crowd/create') { 
+            this.route = 'crowd/create'; 
+            this.menuActive = '3-1'; 
+            this.crowdEditMode = false;
+          }
+          else { 
+            this.route = 'strategy/list'; 
+            this.menuActive = '3-2'; 
+          }
+          this.$nextTick(this.scrollToFocus);
+        },
+        scrollToFocus() {
+          const el = document.querySelector('.active-focus');
+          if (el && typeof el.scrollIntoView === 'function') {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        },
+        go(h) {
+          window.location.hash = h;
+          this.initRoute();
+        },
+        applyFilters() {},
+        resetFilters() { this.filters = { strategyName: '', strategyType: '', crowdName: '' }; },
+        previewStrategy(row) { this.$alert('查看：' + row.name, '提示'); },
+        editStrategy(row) { this.editMode = true; this.go('#strategy/create'); },
+        toggleStrategy(row) { this.$message.success((row.enabled ? '启用' : '停用') + '成功'); },
+        onTypeChange() {
+          this.create.productInput = '';
+          this.create.queryResult = null;
+          this.create.selectedSpu = '';
+          this.create.selectedSkus = [];
+          this.create.selectedProducts = [];
+          this.$message.warning('已切换策略类型，已清空已选商品');
+        },
+        queryProduct() {
+          const id = this.create.productInput.trim();
+          if (!id) {
+            this.$message.warning('请输入商品ID');
+            return;
+          }
+          const found = this.productList.find(p => p.id === id);
+          if (found) {
+            this.create.queryResult = found;
+            this.$message.success('查询成功：' + found.name);
+          } else {
+            this.create.queryResult = null;
+            this.$message.warning('未找到该商品ID');
+          }
+        },
+        onSkuSelect(rows) {
+          this.create.selectedSkus = rows.map(r => r.id).slice(0, 100);
+          this.create.selectedProducts = rows;
+          if (rows.length > 100) this.$message.warning('SKU策略最多选择100个，已截取前100个');
+        },
+        submitStrategy() {
+          if (!this.create.type) {
+            this.$message.error('请选择策略类型');
+            return;
+          }
+          if (this.create.type === 'SPU' && !this.create.selectedSpu) {
+            this.$message.error('请选择SPU商品');
+            return;
+          }
+          if (this.create.type === 'SKU' && this.create.selectedSkus.length === 0) {
+            this.$message.error('请选择SKU商品');
+            return;
+          }
+          if (!this.canProceedPeriod) {
+            this.$message.error('请完善限购周期与数量');
+            return;
+          }
+          this.$confirm('确认保存该限购策略？', '确认').then(() => {
+            this.$message.success('保存成功');
+            this.go('#strategy/list');
+          }).catch(() => {});
+        },
+        previewCrowd(row) { this.$alert('查看：' + row.name, '提示'); },
+        editCrowd(row) { this.crowdEditMode = true; this.go('#crowd/create'); },
+        openProductDialogCrowd() { this.productDialog = true; this.selectedProductsTmp = []; },
+        confirmCrowdCreate() {
+          if (!this.crowdCreate.name || !this.crowdCreate.idText.trim() || !this.crowdCreate.joinCondition) {
+            this.$message.error('请完成所有必填项');
+            return;
+          }
+          this.$confirm('确认保存该人群包？', '确认').then(() => {
+            this.$message.success('保存成功');
+            this.go('#crowd/list');
+          }).catch(() => {});
+        }
+      }
+    })
+  </script>
+</body>
+</html>
