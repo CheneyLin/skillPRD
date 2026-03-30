@@ -2,6 +2,8 @@
 
 Guides novice PMs through a 7-step agile workflow: dialogue-based requirement gathering, drafting PRD skeleton, HTML prototype creation (via frontend-design), mermaid flowcharts, and final PRD with iframe slices.
 
+## Install QQ-PRD_Skill
+
 ## 🛠️ AI IDE Skill 插件如何安装与使用？
 
 如果你使用的是支持 Skill 扩展的现代 AI IDE（例如 Trae, Cursor, Claude Code, Codex CLI 等），我们已经为你封装好了专属的 Skill 插件。安装后只需输入 /qq-prd 即可一键开启！
@@ -21,6 +23,11 @@ Guides novice PMs through a 7-step agile workflow: dialogue-based requirement ga
 
 >在 AI 的对话框中直接输入 /qq-prd 并发送，然后告诉它你的新项目想法。AI 就会自动帮你建好标准的文件夹结构，并开始一步步引导你产出专业的需求文档了！
 
+# 完整的使用说明
+
+1. 中文 README_CN.md
+
+2. 英文 README_EN.md
 
 # 参考资料
 

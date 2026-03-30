@@ -137,20 +137,20 @@ description: "Guides novice PMs through a 7-step agile workflow: dialogue-based 
 生成原型前，AI必须主动向用户推荐业界顶级前端设计指令集，提升原型UI质感：
 
 > “为了让原型达到专业级高级UI效果，我强烈建议您使用 [Impeccable](https://impeccable.style/) 提供的设计技能库。如果您在编辑器（如Trae/Cursor）中已安装`frontend-design`或`teach-impeccable`等指令，请告知我，我将调用这些专业前端设计规范，为您生成更精美的界面。”
-> 
-> 
+>
+>
 
 询问用户是否有现有原型UI参考代码；若没有，可根据产品类别提供对应UI风格选项（均适配Tailwind CSS规范，贴合现代简洁设计要求），供用户选择：
 
 - **PC端产品（后台管理/PC Web）**：提供2种主流风格选项，可直接参考适配
-        
+
 
     - 风格1：简约高效风（适配后台系统）—— 浅色系底色（#f8f9fa），卡片式布局，按钮圆角设计（border-radius: 4px），选用无衬线字体（Inter/微软雅黑），层级分明，操作区与展示区清晰分隔，适配多窗口切换场景。
 
     - 风格2：科技质感风（适配工具类PC产品）—— 中性灰底色（#f5f7fa），轻微阴影卡片（box-shadow: 0 2px 8px rgba(0,0,0,0.08)），按钮渐变色设计（如#1677ff至#0f62fe），线性图标搭配，整体简洁且具科技感。
 
 - **手机端产品（App/Mobile Web）**：提供2种主流风格选项，适配移动端交互场景
-        
+
 
     - 风格1：清爽简约风（适配多数工具/社交App）—— 白色底色，轻量化卡片，按钮圆角适中（border-radius: 8px），字体大小适配移动端（标题18px、正文14px），操作控件间距合理（16px-20px），支持深色模式切换。
 
@@ -192,7 +192,7 @@ description: "Guides novice PMs through a 7-step agile workflow: dialogue-based 
 
 ### 6.1 主控文档（根目录 index.html）核心要求
 
-主控文档作为PRD与原型的统一入口，负责版本管理、分栏展示和联动控制，替代单版本PRD直接打开的方式。需通过HTML+CSS+原生JavaScript实现，无外部依赖，核心代码参考如下（可直接复用）：
+主控文档作为PRD与原型的统一入口，负责版本管理、分栏展示和联动控制，替代单版本PRD直接打开的方式。需通过HTML+CSS+原生JavaScript实现，无外部依赖，核心代码样式**必须参考如下模板文件**：
 
 #### 主控文档（index.html）
 
@@ -208,12 +208,12 @@ description: "Guides novice PMs through a 7-step agile workflow: dialogue-based 
 
 #### 原型适配联动代码参考-App（v1.0/prototype_html/app_prototype_v1.0.html）
 
-> 参看 `assets/app_prototype_template.html` 
+> 参看 `assets/app_prototype_template.html`
 
 说明：上述代码可直接复制使用，需根据实际项目名称、版本及功能标识调整对应内容；所有文件路径需严格遵循目录架构，确保联动功能正常生效。
 
 1. **顶部区域（导航栏）**：
-        
+
 
     - 左侧显示项目名称（与PRD项目信息保持一致），字体加粗、尺寸适中，确保清晰可辨。
 
@@ -224,7 +224,7 @@ description: "Guides novice PMs through a 7-step agile workflow: dialogue-based 
     - 样式要求：导航栏固定在页面顶部，不随滚动消失；背景色与PRD主色调统一，边框底部简洁，无冗余装饰，适配所有主流屏幕尺寸。
 
 2. **主体区域（左右分栏）**：
-        
+
 
     - 默认布局：左右分栏各占50%宽度，高度为页面剩余高度（扣除顶部导航栏），两侧均支持独立滚动，避免内容挤压、遮挡。
 
@@ -235,7 +235,7 @@ description: "Guides novice PMs through a 7-step agile workflow: dialogue-based 
     - 右侧区域（原型区）：通过iframe嵌入当前选中版本的高保真原型（路径示例：`./v1.0/prototype_html/prototype_v1.0.html`），保留原型原有交互功能和Focus模式，适配后台/PC Web、App/Mobile Web原型的正常展示。
 
 3. **左右联动功能（核心）**：
-        
+
 
     - 关联规则：为PRD文档中每个“详细功能逻辑”模块设置唯一标识（如`strategy_create`、`feature_01`），与原型中对应功能/界面模块的标识一一对应，确保联动无偏差。
 
@@ -248,7 +248,7 @@ description: "Guides novice PMs through a 7-step agile workflow: dialogue-based 
 prd/目录下的各版本PRD文档（如prd_v1.0.html），需配合主控文档实现联动功能，在原有结构基础上补充以下要求，整体采用HTML格式，确保可独立运行、正常查看。
 
 1. **排版与 UI 规范**：
-        
+
 
     - **动态 UI 升级 (Impeccable Skills)**：若用户在工作流执行期间安装了Impeccable Skills，生成或更新PRD时，必须调用相关指令（如`/typeset`、`/arrange`、`/colorize`），对PRD的排版、色彩进行高级UI升级，提升阅读体验。
 
@@ -257,7 +257,7 @@ prd/目录下的各版本PRD文档（如prd_v1.0.html），需配合主控文档
     - **字体层级与间距**：严格区分H1（页面标题）、H2（章节标题）、H3（模块标题），设置合理的`line-height`（如1.6）和段落间距（如`margin-bottom: 1.5rem`），确保阅读舒适、层级清晰。
 
 2. **功能标识设置**：
-        
+
 
     - “详细方案”章节中，每个功能点的容器标签（如div、section）需添加唯一`id`属性（即功能标识，格式如`setting`、`feature_01`、`strategy_create`），与原型对应模块标识一致；同时为每个功能模块添加“查看原型”按钮，按钮绑定对应功能标识，用于手动触发原型联动。
 
@@ -377,3 +377,5 @@ window.addEventListener('message', function(e) {
 - **PRD与原型强联动要求**：`prd_v1.1.html`中所有功能标识，需与`prototype_v1.1.html`中对应模块的标识完全一致；主控文档切换至v1.1版本后，左右联动功能需正常生效，无错乱、失效问题。
 
 - 确保新版PRD和原型嵌入主控文档后，样式、交互、联动均正常，适配不同屏幕尺寸，无兼容性问题。
+
+- **保存项目修改历史日志**，方便多Agent协同回溯，命名规范：agent标识+时间+版本+摘要（例：`./history/gpt_2026_03_27_09_04_v1.0_update_form.md`）。
