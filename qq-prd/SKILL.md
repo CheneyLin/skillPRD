@@ -1,6 +1,6 @@
 ---
 name: "qq-prd"
-description: "Guides novice PMs through a 7-step agile workflow: dialogue-based requirement gathering, drafting PRD skeleton, HTML prototype creation (via frontend-design), mermaid flowcharts, and final PRD with Prototype all in one place."
+description: "通过对话式需求收集、PRD 骨架起草、HTML 原型生成（借助前端设计）、Mermaid 流程图绘制以及含 iframe 联动导航结构的最终 PRD，共 7 步敏捷工作流，引导新手 PM 完成全流程。"
 ---
 
 # QQ产品经理PRD工作流 (QQ PRD Workflow)
@@ -66,7 +66,7 @@ description: "Guides novice PMs through a 7-step agile workflow: dialogue-based 
 
 ### 2.1 建立标准文档目录树
 
-主动为当前项目创建专属根文件夹（以项目名称+PRD命名），并在根文件夹内创建以下标准文件及子目录，严格遵循命名规范：
+主动为当前项目创建**专属根文件夹**（以项目名称+PRD命名），方便后期分发打包，并在根文件夹内创建以下标准文件及子目录，严格遵循命名规范：
 
 - `index.html` ：主控框架文档，实现PRD版本切换、多产品形态原型切换、PRD与原型左右联动等核心功能。
 
@@ -82,7 +82,7 @@ description: "Guides novice PMs through a 7-step agile workflow: dialogue-based 
 
 - `resource/`：存放工作流模板及产品项目参考文件（如`index_template.html`、`prd_template.md`），供后续迭代复用（适配2.0版本及后续迭代）。
 
-- `history/` ：存放项目修改历史日志，方便多Agent协同回溯，命名规范：agent标识+时间+版本+摘要（例：`gpt_2026_03_27_09_04_v1.0_update_form.md`）。
+- `history/` ：存放项目修改历史日志，方便多Agent协同回溯，命名规范：AI 模板或Agent 标识 + 时间 + 版本 + 摘要（例：`gpt_2026_03_27_09_04_v1.0_update_form.md`）。
 
 ### 2.2 确认架构
 
@@ -96,7 +96,7 @@ description: "Guides novice PMs through a 7-step agile workflow: dialogue-based 
 
 ### 3.1 产出内容
 
-基于步骤一确认的需求信息，参考PRD标准模板，直接生成v1.0版本初步PRD草稿，包含两份同步文档（分别存放在对应目录）。初版PRD需搭建完整文档结构骨架（参考6.1节标准目录），并深度填充以下核心内容：
+基于步骤一确认的需求信息，参考 `/assets/prd_template.md` 标准模板结构，严格使用相关文档的样式和格式，直接生成v1.0版本初步PRD MD格式草稿，初版PRD需搭建完整文档结构骨架（参考上面的标准目录结构），并深度填充以下核心内容：
 
 1. **项目基本信息**（项目名称、版本、负责人、创建时间等）；
 
@@ -122,11 +122,11 @@ description: "Guides novice PMs through a 7-step agile workflow: dialogue-based 
 
 ### 4.1 原型规范
 
-1. 按产品形态（后台/PC Web、App/Mobile Web）分别产出**单文件HTML格式原型**，包含完整CSS样式，确保可直接打开查看、操作。
+1. 按产品形态（后台/PC Web、App/Mobile Web）分别产出**单文件HTML格式原型**，参考 `/assets/admin_prototype_template.html` 和 `/assets/app_prototype_template.html` 标准模板结构，严格使用相关文档的样式和格式，确保可直接打开查看、操作。
 
-2. **手机端产品（App/Mobile Web）**：强制使用**Tailwind CSS**，采用现代、简洁的设计风格，适配移动端交互习惯。通过固定尺寸手机模拟外框（包含状态栏、底部导航等视觉元素）展示分页面，支持全局展示切换/指定页面展示，增强真实感。**严禁**输出仅移动端单页交互版本原型，避免用户 confusion。
+2. **手机端产品（App/Mobile Web）**：如无模板，可使用**Tailwind CSS**，采用现代、简洁的设计风格，适配移动端交互习惯。通过固定尺寸手机模拟外框（包含状态栏、底部导航等视觉元素）展示分页面，支持全局展示切换/指定页面展示，增强真实感。**严禁**输出仅移动端单页交互版本原型，避免用户 confusion。
 
-3. **PC端产品（后台管理/PC Web）**：默认使用**Bootstrap 5**，采用**Material Design**风格；支持用户指定UI库（如Element UI、Ant Design、MUI、Arco Design等），贴合项目实际需求。
+3. **PC端产品（后台管理/PC Web）**：如无模板，可使用**Bootstrap 5**，采用**Material Design**风格；支持用户指定UI库（如Element UI、Ant Design、MUI、Arco Design等），贴合项目实际需求。
 
 4. 必须包含核心交互状态（如默认页、弹窗展开、操作成功/失败提示、空状态等）；可通过原生JavaScript或URL Hash（`#page1`）实现页面切换，模拟真实操作流程。
 
@@ -134,11 +134,10 @@ description: "Guides novice PMs through a 7-step agile workflow: dialogue-based 
 
 ### 4.2 💡 强烈推荐使用 Impeccable Skills
 
-生成原型前，AI必须主动向用户推荐业界顶级前端设计指令集，提升原型UI质感：
+如果用户要求生成高保真原型，生成原型前，AI必须主动向用户推荐业界顶级前端设计指令集，提升原型UI质感：
 
 > “为了让原型达到专业级高级UI效果，我强烈建议您使用 [Impeccable](https://impeccable.style/) 提供的设计技能库。如果您在编辑器（如Trae/Cursor）中已安装`frontend-design`或`teach-impeccable`等指令，请告知我，我将调用这些专业前端设计规范，为您生成更精美的界面。”
->
->
+
 
 询问用户是否有现有原型UI参考代码；若没有，可根据产品类别提供对应UI风格选项（均适配Tailwind CSS规范，贴合现代简洁设计要求），供用户选择：
 
