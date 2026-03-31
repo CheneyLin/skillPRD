@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>明星答题 - 完整原型展示</title>
+    <title>快闪店预售商品回填单 - H5 完整原型</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -15,7 +14,7 @@
         }
         
         body {
-            font-family: 'Rounded Mplus 1c', 'Hiragino Maru Gothic ProN', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
             background-color: #1a1a1a;
             min-height: 100vh;
             padding-bottom: 100px;
@@ -32,7 +31,7 @@
         }
         
         .control-btn {
-            background: linear-gradient(135deg, #6c5ce7, #5b4cc4);
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
             border: none;
             padding: 0.75rem 1.5rem;
@@ -41,7 +40,7 @@
             font-weight: 600;
             font-size: 0.9rem;
             transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.4);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
             display: flex;
             align-items: center;
             gap: 0.5rem;
@@ -49,7 +48,7 @@
         
         .control-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(108, 92, 231, 0.6);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
         }
         
         .control-btn.active {
@@ -79,10 +78,16 @@
             font-size: 1rem;
         }
         
+        /* 手机原型统一尺寸（H5/App 同比例） */
+        :root {
+            --phone-width: 375px;
+            --phone-height: 812px;
+        }
+
         /* 平铺容器 */
         .prototype-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(390px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(var(--phone-width), 1fr));
             gap: 2rem;
             padding: 2rem;
             max-width: 100%;
@@ -92,7 +97,7 @@
         
         /* 平铺容器 - 全局视图模式 */
         .prototype-container.global-view {
-            grid-template-columns: repeat(auto-fill, minmax(390px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(var(--phone-width), 1fr));
             gap: 2rem;
             max-width: none;
             padding: 2rem;
@@ -107,276 +112,188 @@
         
         /* 手机框架 */
         .phone-frame {
-            width: 390px;
-            height: 844px;
-            background: white;
-            border-radius: 30px;
+            width: var(--phone-width);
+            height: var(--phone-height);
+            background: #f0f2f5;
+            border-radius: 40px;
             overflow: hidden;
             position: relative;
             box-shadow: 0 0 30px rgba(0,0,0,0.3);
             transition: all 0.3s ease;
-            border: 4px solid transparent;
+            border: 12px solid #1a1a1a;
         }
         
         .phone-frame.highlighted {
-            border-color: #6c5ce7;
-            box-shadow: 0 0 50px rgba(108, 92, 231, 0.6);
+            border-color: #667eea;
+            box-shadow: 0 0 50px rgba(102, 126, 234, 0.6);
             transform: scale(1.02);
+        }
+        
+        .phone-notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 30px;
+            background: #1a1a1a;
+            border-radius: 0 0 20px 20px;
+            z-index: 50;
         }
         
         .status-bar {
             height: 44px;
-            background: #000;
+            background: #fff;
             position: relative;
-            padding: 0 20px;
-            z-index: 50;
+            padding: 0 16px;
+            z-index: 40;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 12px;
+            border-bottom: 1px solid #f0f0f0;
         }
         
         /* 页面内容容器 */
         .page-content {
-            height: calc(100% - 44px);
+            height: calc(var(--phone-height) - 44px);
             overflow-y: auto;
             position: relative;
+            padding: 16px;
+            padding-top: 60px;
+            padding-bottom: 100px;
+        }
+
+        /* 首屏布局模拟：保证关键内容在第一屏完成信息传达 */
+        .first-screen-hero {
+            background: linear-gradient(135deg, #ffffff 0%, #f7f8ff 100%);
+            border: 1px solid #e9ecff;
+            border-radius: 16px;
+            padding: 12px 14px;
+            margin-bottom: 12px;
+        }
+
+        .first-screen-hero .title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #2d2f33;
+        }
+
+        .first-screen-hero .desc {
+            margin-top: 4px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .first-screen-actions {
+            position: sticky;
+            bottom: 8px;
+            background: linear-gradient(to top, rgba(240,242,245,0.96) 65%, rgba(240,242,245,0));
+            padding-top: 10px;
         }
         
-        /* 隐藏滚动条但保留功能 (Chrome/Safari) */
+        /* 隐藏滚动条但保留功能 */
         .page-content::-webkit-scrollbar {
             width: 0;
             display: none;
         }
         
         /* 通用样式 */
-        .quiz-card {
-            background-color: white;
-            border-radius: 20px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s;
-            cursor: pointer;
+        .section {
+            margin-bottom: 20px;
         }
         
-        .quiz-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-        }
-        
-        .btn-primary {
-            background-color: #6c5ce7;
-            color: white;
-            border-radius: 15px;
-            padding: 0.75rem 2rem;
-            font-weight: bold;
-            transition: all 0.2s;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.4);
-        }
-        
-        .category-tag {
-            background-color: #e9ecef;
-            color: #6c5ce7;
-            border-radius: 10px;
-            padding: 0.25rem 0.75rem;
-            font-size: 0.75rem;
+        .section-title {
+            font-size: 14px;
             font-weight: 600;
-        }
-        
-        .character {
-            width: 60px;
-            height: 60px;
-        }
-        
-        /* 底部导航 */
-        .bottom-nav {
-            position: absolute;
-            bottom: 0;
-            width: 390px;
-            background: white;
-            border-top: 1px solid #e9ecef;
-            padding: 0.5rem 0 1.5rem;
-            z-index: 40;
-        }
-        
-        .nav-item {
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .nav-item:hover {
-            transform: translateY(-2px);
-        }
-        
-        .nav-item.active {
-            color: #6c5ce7;
-        }
-        
-        /* Lottie 容器 */
-        #lottie-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 100;
-            display: none;
-        }
-        
-        /* 进度条 */
-        .progress-container {
-            height: 10px;
-            background-color: #e9ecef;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-        
-        .progress-bar {
-            height: 100%;
-            background-color: #6c5ce7;
-            border-radius: 10px;
-            transition: width 0.3s ease;
-        }
-        
-        /* 选项按钮 */
-        .option-btn {
-            border-radius: 15px;
-            transition: all 0.2s;
-            cursor: pointer;
-        }
-        
-        .option-btn:hover {
-            transform: translateY(-2px);
-        }
-        
-        .option-circle {
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            color: #333;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-weight: bold;
+            gap: 6px;
         }
         
-        /* 排行榜样式 */
-        .rank-card {
-            background-color: white;
-            border-radius: 20px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            transition: all 0.2s;
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 16px;
+            background: #667eea;
+            border-radius: 2px;
         }
         
-        .tab-button {
-            padding: 0.5rem 1rem;
-            border-radius: 15px;
+        .submit-btn {
+            position: absolute;
+            bottom: 20px;
+            left: 16px;
+            right: 16px;
+            height: 48px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 24px;
+            font-size: 16px;
             font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
             transition: all 0.2s;
-            cursor: pointer;
         }
         
-        .tab-button.active {
-            background-color: #6c5ce7;
-            color: white;
+        .submit-btn:active {
+            transform: scale(0.98);
         }
         
-        .medal {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: white;
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
         }
         
-        .medal-1 {
-            background: linear-gradient(135deg, #FFD700, #FFA500);
-        }
-        
-        .medal-2 {
-            background: linear-gradient(135deg, #C0C0C0, #A9A9A9);
-        }
-        
-        .medal-3 {
-            background: linear-gradient(135deg, #CD7F32, #8B4513);
-        }
-        
-        /* 设置页面样式 */
-        .settings-card {
-            background-color: white;
-            border-radius: 20px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            margin-bottom: 15px;
-        }
-        
-        .settings-item {
-            padding: 15px;
-            border-bottom: 1px solid #f0f0f0;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            cursor: pointer;
-        }
-        
-        .settings-item:last-child {
-            border-bottom: none;
-        }
-        
-        .icon-container {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 12px;
-        }
-        
-        .toggle {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 24px;
-        }
-        
-        .toggle input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-        
-        .slider {
+        /* 成功弹窗 */
+        .success-modal {
             position: absolute;
-            cursor: pointer;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: #e9ecef;
-            transition: .4s;
-            border-radius: 24px;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
         }
         
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 18px;
-            width: 18px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            transition: .4s;
+        .success-content {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            text-align: center;
+            width: 280px;
+        }
+        
+        .success-icon {
+            width: 64px;
+            height: 64px;
+            background: #52c41a;
             border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            font-size: 32px;
+            color: white;
         }
         
-        input:checked + .slider {
-            background-color: #6c5ce7;
+        .success-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
         }
         
-        input:checked + .slider:before {
-            transform: translateX(26px);
+        .success-orderno {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
         }
         
         /* 标签页 */
@@ -404,7 +321,7 @@
             background: #333;
             color: white;
             border: none;
-            padding: 0.75rem 2rem;
+            padding: 0.75rem 1.5rem;
             border-radius: 15px;
             cursor: pointer;
             font-weight: 600;
@@ -412,12 +329,12 @@
         }
         
         .tab-btn.active {
-            background: #6c5ce7;
+            background: #667eea;
             transform: scale(1.05);
         }
         
         .tab-btn:hover {
-            background: #5b4cc4;
+            background: #5b6fd9;
         }
         
         /* 页面显示控制 */
@@ -432,7 +349,7 @@
         
         /* 全局视图时移除高亮效果 */
         .prototype-container.global-view .phone-frame.highlighted {
-            border-color: transparent;
+            border-color: #1a1a1a;
             box-shadow: 0 0 30px rgba(0,0,0,0.3);
             transform: none;
         }
@@ -458,19 +375,27 @@
         }
         
         ::-webkit-scrollbar-thumb {
-            background: #6c5ce7;
+            background: #667eea;
             border-radius: 4px;
         }
         
         ::-webkit-scrollbar-thumb:hover {
-            background: #5b4cc4;
+            background: #5b6fd9;
+        }
+        
+        /* 高亮模块 */
+        .feature-highlight {
+            border: 2px solid #ff4d4f !important;
+            box-shadow: 0 0 0 4px rgba(255, 77, 79, 0.2);
+            transition: all 0.3s;
+        }
+        
+        .prototype-module {
+            transition: all 0.3s;
         }
     </style>
 </head>
 <body>
-    <!-- Lottie 容器 -->
-    <div id="lottie-container"></div>
-    
     <!-- 固定控制按钮 -->
     <div class="fixed-controls">
         <button class="control-btn active" id="globalViewBtn" onclick="toggleGlobalView()">
@@ -485,38 +410,26 @@
     
     <!-- 头部标题 -->
     <div class="header-title">
-        <h1><i class="fas fa-mobile-alt mr-3"></i>明星答题 - 完整原型展示</h1>
-        <p>点击选项卡切换不同页面，或访问 #home、#quiz、#ranking、#profile、#settings 直接定位</p>
+        <h1><i class="fas fa-mobile-alt mr-3"></i>快闪店预售商品回填单 - H5 原型</h1>
+        <p>点击选项卡切换不同页面，或访问 #combined、#success 直接定位</p>
     </div>
     
     <!-- 标签页切换 -->
     <div class="tabs" id="tabsContainer">
-        <button class="tab-btn active" onclick="showPage('home')">
-            <i class="fas fa-home mr-2"></i>首页
+        <button class="tab-btn active" onclick="showPage('combined')">
+            <i class="fas fa-file-alt mr-2"></i>回填单
         </button>
-        <button class="tab-btn" onclick="showPage('quiz')">
-            <i class="fas fa-question-circle mr-2"></i>答题页
-        </button>
-        <button class="tab-btn" onclick="showPage('result')">
-            <i class="fas fa-clipboard-check mr-2"></i>结果页
-        </button>
-        <button class="tab-btn" onclick="showPage('ranking')">
-            <i class="fas fa-trophy mr-2"></i>排行榜
-        </button>
-        <button class="tab-btn" onclick="showPage('profile')">
-            <i class="fas fa-user mr-2"></i>个人中心
-        </button>
-        <button class="tab-btn" onclick="showPage('settings')">
-            <i class="fas fa-cog mr-2"></i>设置
+        <button class="tab-btn" onclick="showPage('success')">
+            <i class="fas fa-check mr-2"></i>提交成功
         </button>
     </div>
 
     <!-- 页面容器 -->
     <div class="prototype-container global-view" id="prototypeContainer">
-        
-        <!-- 首页 -->
-        <div id="home" class="phone-frame page-section active">
-            <div class="status-bar flex items-center justify-between text-white">
+        <!-- 商品选择页（对应 PRD：feature_01） -->
+        <div id="combined" class="phone-frame page-section active">
+            <div class="phone-notch"></div>
+            <div class="status-bar">
                 <span>9:41</span>
                 <div class="flex items-center gap-2">
                     <i class="fas fa-signal"></i>
@@ -524,682 +437,158 @@
                     <i class="fas fa-battery-full"></i>
                 </div>
             </div>
-            
-            <div class="page-content bg-[#f0f1ff]">
-                <!-- 顶部导航 -->
-                <nav class="px-4 py-3 flex items-center justify-between bg-white shadow-md">
-                    <div class="flex items-center">
-                        <div class="character bg-purple-100 rounded-full flex items-center justify-center mr-3">
-                            <img src="https://images.unsplash.com/photo-1560800452-f2d475982b96?w=150&h=150&fit=crop&crop=faces" class="w-10 h-10 object-cover rounded-full" alt="角色">
-                        </div>
-                        <div>
-                            <h1 class="text-lg font-bold text-purple-600">你好，小明</h1>
-                            <p class="text-xs text-gray-500">今天也要加油答题哦！</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center">
-                        <div class="bg-yellow-100 text-yellow-600 px-3 py-1 rounded-full text-sm font-bold mr-2">
-                            <i class="fas fa-star mr-1"></i>
-                            <span>1250 分</span>
-                        </div>
-                        <i class="fas fa-bell text-purple-600 text-xl cursor-pointer"></i>
-                    </div>
-                </nav>
-
-                <!-- 主要内容 -->
-                <main class="p-4 pb-24">
-                    <!-- 推荐挑战 -->
-                    <section class="mb-6">
-                        <h2 class="text-xl font-bold mb-4 text-purple-600">推荐挑战</h2>
-                        <div class="quiz-card p-4 mb-4 relative overflow-hidden" onclick="startQuiz('周杰伦专题挑战', '音乐', 10)">
-                            <div class="absolute top-0 right-0 bg-purple-500 text-white px-3 py-1 rounded-bl-lg text-xs font-bold">
-                                热门
-                            </div>
-                            <div class="flex">
-                                <div class="w-1/3 mr-3">
-                                    <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300&h=200&fit=crop" 
-                                         class="w-full h-24 object-cover rounded-lg" alt="周杰伦专题">
-                                </div>
-                                <div class="w-2/3">
-                                    <h3 class="font-bold mb-1">周杰伦专题挑战</h3>
-                                    <p class="text-gray-500 text-xs mb-2">测试你对周杰伦音乐的了解程度</p>
-                                    <div class="flex items-center justify-between">
-                                        <span class="category-tag">音乐</span>
-                                        <span class="text-xs text-gray-500">10 题 · 5 分钟</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="quiz-card p-4 mb-4" onclick="startQuiz('猫咪知识大挑战', '动物', 8)">
-                            <div class="flex">
-                                <div class="w-1/3 mr-3">
-                                    <img src="https://images.unsplash.com/photo-1518791841217-8f162f1e1131?w=300&h=200&fit=crop" 
-                                         class="w-full h-24 object-cover rounded-lg" alt="猫咪知识">
-                                </div>
-                                <div class="w-2/3">
-                                    <h3 class="font-bold mb-1">猫咪知识大挑战</h3>
-                                    <p class="text-gray-500 text-xs mb-2">你了解猫咪的习性和特点吗？</p>
-                                    <div class="flex items-center justify-between">
-                                        <span class="category-tag">动物</span>
-                                        <span class="text-xs text-gray-500">8 题 · 4 分钟</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                    
-                    <!-- 热门分类 -->
-                    <section class="mb-6">
-                        <h2 class="text-xl font-bold mb-4 text-purple-600">热门分类</h2>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div class="quiz-card p-3 flex items-center" onclick="startQuiz('音乐挑战', '音乐', 10)">
-                                <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center mr-2">
-                                    <i class="fas fa-music text-red-500"></i>
-                                </div>
-                                <span class="font-medium">音乐</span>
-                            </div>
-                            <div class="quiz-card p-3 flex items-center" onclick="startQuiz('电影挑战', '电影', 10)">
-                                <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-2">
-                                    <i class="fas fa-film text-blue-500"></i>
-                                </div>
-                                <span class="font-medium">电影</span>
-                            </div>
-                            <div class="quiz-card p-3 flex items-center" onclick="startQuiz('文学挑战', '文学', 10)">
-                                <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center mr-2">
-                                    <i class="fas fa-book text-green-500"></i>
-                                </div>
-                                <span class="font-medium">文学</span>
-                            </div>
-                            <div class="quiz-card p-3 flex items-center" onclick="startQuiz('体育挑战', '体育', 10)">
-                                <div class="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center mr-2">
-                                    <i class="fas fa-basketball-ball text-yellow-500"></i>
-                                </div>
-                                <span class="font-medium">体育</span>
-                            </div>
-                        </div>
-                    </section>
-                    
-                    <!-- 每日挑战 -->
-                    <section>
-                        <div class="quiz-card p-5 text-center">
-                            <div class="mb-3">
-                                <img src="https://images.unsplash.com/photo-1579547945413-497e1b99dac0?w=500&h=300&fit=crop" 
-                                     class="w-full h-32 object-cover rounded-lg" alt="每日挑战">
-                            </div>
-                            <h3 class="font-bold text-lg mb-2">每日挑战</h3>
-                            <p class="text-gray-500 text-sm mb-4">完成今日挑战，获得额外积分奖励！</p>
-                            <button class="btn-primary" onclick="startQuiz('每日挑战', '综合', 10)">
-                                开始挑战
-                            </button>
-                        </div>
-                    </section>
-                </main>
-                
-                <!-- 底部导航 -->
-                <div class="bottom-nav">
-                    <div class="flex justify-around">
-                        <div class="text-center nav-item active">
-                            <i class="fas fa-home text-xl"></i>
-                            <p class="text-xs mt-1 font-medium">首页</p>
-                        </div>
-                        <div class="text-center text-gray-400 nav-item" onclick="showPage('ranking')">
-                            <i class="fas fa-trophy text-xl"></i>
-                            <p class="text-xs mt-1">排行榜</p>
-                        </div>
-                        <div class="text-center text-gray-400 nav-item" onclick="showPage('profile')">
-                            <i class="fas fa-user text-xl"></i>
-                            <p class="text-xs mt-1">我的</p>
-                        </div>
-                        <div class="text-center text-gray-400 nav-item" onclick="showPage('settings')">
-                            <i class="fas fa-cog text-xl"></i>
-                            <p class="text-xs mt-1">设置</p>
-                        </div>
-                    </div>
+            <div class="page-content">
+                <div class="first-screen-hero">
+                    <div class="title">快闪店预售回填单</div>
+                    <div class="desc">请在本页一次性完成商品、地址和小票信息填写（首屏已展示核心入口）。</div>
                 </div>
-            </div>
-        </div>
-
-        <!-- 答题页 -->
-        <div id="quiz" class="phone-frame page-section">
-            <div class="status-bar flex items-center justify-between text-white">
-                <span>9:41</span>
-                <div class="flex items-center gap-2">
-                    <i class="fas fa-signal"></i>
-                    <i class="fas fa-wifi"></i>
-                    <i class="fas fa-battery-full"></i>
-                </div>
-            </div>
-            
-            <div class="page-content bg-[#f0f1ff]">
-                <!-- 顶部导航 -->
-                <nav class="px-4 py-3 flex items-center justify-between bg-white rounded-b-3xl shadow-md">
-                    <div class="flex items-center">
-                        <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mr-3 cursor-pointer" onclick="showPage('home')">
-                            <i class="fas fa-arrow-left text-purple-600"></i>
-                        </div>
-                        <h1 class="text-xl font-bold text-purple-600" id="quiz-title">周杰伦专题挑战</h1>
-                    </div>
-                    <div class="bg-purple-100 text-purple-600 px-4 py-1.5 rounded-full text-sm font-bold flex items-center">
-                        <span class="mr-1" id="current-question">3</span>
-                        <span class="text-xs">/</span>
-                        <span class="ml-1" id="total-questions">10 题</span>
-                    </div>
-                </nav>
-
-                <!-- 进度条 -->
-                <div class="px-4 py-3">
-                    <div class="progress-container">
-                        <div class="progress-bar" id="progress-bar" style="width: 30%"></div>
-                    </div>
-                </div>
-
-                <!-- 主要内容 -->
-                <main class="p-4 pb-24">
-                    <!-- 角色头像 -->
-                    <div class="flex justify-center mb-4">
-                        <div class="character bg-green-100 rounded-full flex items-center justify-center">
-                            <img src="https://images.unsplash.com/photo-1560800452-f2d475982b96?w=150&h=150&fit=crop&crop=faces" class="w-12 h-12 object-cover rounded-full" alt="角色">
-                        </div>
-                    </div>
-                    
-                    <!-- 题目卡片 -->
-                    <div class="quiz-card p-5 mb-6">
-                        <!-- 题目配图 -->
-                        <div class="mb-5 rounded-xl overflow-hidden">
-                            <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&h=300&fit=crop" 
-                                 class="w-full h-40 object-cover bg-blue-50" alt="音乐主题图片">
-                        </div>
-                        
-                        <h2 class="text-xl font-bold mb-4 text-center" id="question-text">《七里香》这首歌是周杰伦在哪一年发行的？</h2>
-                        <p class="text-gray-500 text-sm text-center mb-4">提示：这是他的第五张专辑同名主打歌</p>
-                        
-                        <!-- 选项列表 -->
-                        <div class="space-y-3 mt-6">
-                            <button onclick="selectAnswer(this, true)" class="option-btn w-full bg-yellow-100 p-4 text-left border-2 border-transparent hover:border-yellow-400 flex items-center">
-                                <div class="option-circle bg-yellow-400 text-white mr-3">A</div>
-                                <span>2000 年</span>
-                            </button>
-                            
-                            <button onclick="selectAnswer(this, false)" class="option-btn w-full bg-blue-100 p-4 text-left border-2 border-transparent hover:border-blue-400 flex items-center">
-                                <div class="option-circle bg-blue-400 text-white mr-3">B</div>
-                                <span>2001 年</span>
-                            </button>
-                            
-                            <button onclick="selectAnswer(this, false)" class="option-btn w-full bg-pink-100 p-4 text-left border-2 border-transparent hover:border-pink-400 flex items-center">
-                                <div class="option-circle bg-pink-400 text-white mr-3">C</div>
-                                <span>2002 年</span>
-                            </button>
-                            
-                            <button onclick="selectAnswer(this, false)" class="option-btn w-full bg-green-100 p-4 text-left border-2 border-transparent hover:border-green-400 flex items-center">
-                                <div class="option-circle bg-green-400 text-white mr-3">D</div>
-                                <span>2003 年</span>
-                            </button>
-                        </div>
-                    </div>
-                </main>
-
-                <!-- 底部按钮 -->
-                <div class="absolute bottom-4 left-4 right-4">
-                    <button onclick="nextQuestion()" class="bg-purple-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg hover:bg-purple-700 transition w-full">
-                        下一题
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- 结果页 -->
-        <div id="result" class="phone-frame page-section">
-            <div class="status-bar flex items-center justify-between text-white">
-                <span>9:41</span>
-                <div class="flex items-center gap-2">
-                    <i class="fas fa-signal"></i>
-                    <i class="fas fa-wifi"></i>
-                    <i class="fas fa-battery-full"></i>
-                </div>
-            </div>
-            
-            <div class="page-content bg-gray-900">
-                <!-- 顶部导航 -->
-                <nav class="bg-gray-800 px-4 py-3 flex items-center justify-between">
-                    <div class="flex items-center">
-                        <i class="fas fa-times text-gray-400 mr-4 cursor-pointer" onclick="showPage('home')"></i>
-                        <h1 class="text-xl font-medium">答题结果</h1>
-                    </div>
-                    <button class="bg-blue-600 px-4 py-1 rounded-full text-sm" onclick="shareResult()">
-                        分享战绩
-                    </button>
-                </nav>
-
-                <!-- 结果展示 -->
-                <div class="p-8 text-center pt-12">
-                    <div class="mb-8">
-                        <div class="text-6xl font-bold text-blue-500 mb-2" id="score">92</div>
-                        <div class="text-gray-400">得分</div>
-                    </div>
-                    
-                    <div class="grid grid-cols-3 gap-4 mb-8">
-                        <div class="bg-gray-800 p-4 rounded-xl">
-                            <div class="text-xl font-bold" id="accuracy">9/10</div>
-                            <div class="text-sm text-gray-400">正确率</div>
-                        </div>
-                        <div class="bg-gray-800 p-4 rounded-xl">
-                            <div class="text-xl font-bold">12 分钟</div>
-                            <div class="text-sm text-gray-400">用时</div>
-                        </div>
-                        <div class="bg-gray-800 p-4 rounded-xl">
-                            <div class="text-xl font-bold">+500</div>
-                            <div class="text-sm text-gray-400">积分</div>
-                        </div>
+                <div class="section prototype-module" data-prototype="back_form_edit">
+                    <div class="section-title">
+                        <span class="inline-block w-1 h-4 bg-purple-600 rounded mr-2"></span>
+                        回填单（商品选择 + 收货地址 + 小票信息）
                     </div>
 
-                    <!-- 获得成就 -->
-                    <div class="bg-gray-800 p-6 rounded-xl mb-8">
-                        <h3 class="text-lg font-bold mb-4">获得成就</h3>
-                        <div class="flex justify-center gap-4">
-                            <div class="text-center">
-                                <div class="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center mb-2">
-                                    <i class="fas fa-bolt text-xl"></i>
-                                </div>
-                                <div class="text-sm">速答王</div>
-                            </div>
-                            <div class="text-center">
-                                <div class="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center mb-2">
-                                    <i class="fas fa-star text-xl"></i>
-                                </div>
-                                <div class="text-sm">完美答题</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 操作按钮 -->
                     <div class="space-y-4">
-                        <button onclick="showAnalysis()" class="w-full bg-blue-600 py-3 rounded-xl font-medium">
-                            查看解析
-                        </button>
-                        <button onclick="restartQuiz()" class="w-full bg-gray-800 py-3 rounded-xl font-medium">
-                            再来一次
-                        </button>
-                        <button onclick="showPage('home')" class="w-full bg-gray-800 py-3 rounded-xl font-medium">
-                            返回首页
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 排行榜页 -->
-        <div id="ranking" class="phone-frame page-section">
-            <div class="status-bar flex items-center justify-between text-white">
-                <span>9:41</span>
-                <div class="flex items-center gap-2">
-                    <i class="fas fa-signal"></i>
-                    <i class="fas fa-wifi"></i>
-                    <i class="fas fa-battery-full"></i>
-                </div>
-            </div>
-            
-            <div class="page-content bg-[#f0f1ff]">
-                <!-- 顶部导航 -->
-                <nav class="px-4 py-3 flex items-center justify-between bg-white rounded-b-3xl shadow-md">
-                    <div class="flex items-center">
-                        <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mr-3 cursor-pointer" onclick="showPage('home')">
-                            <i class="fas fa-arrow-left text-purple-600"></i>
-                        </div>
-                        <h1 class="text-xl font-bold text-purple-600">排行榜</h1>
-                    </div>
-                    <div class="bg-yellow-100 text-yellow-600 px-3 py-1 rounded-full text-sm font-bold">
-                        <i class="fas fa-star mr-1"></i>
-                        <span>我的排名：第 8 名</span>
-                    </div>
-                </nav>
-
-                <!-- 分类标签 -->
-                <div class="px-4 py-3 flex justify-between">
-                    <div class="tab-button active" onclick="switchRankTab(this)">总榜</div>
-                    <div class="tab-button" onclick="switchRankTab(this)">周榜</div>
-                    <div class="tab-button" onclick="switchRankTab(this)">月榜</div>
-                    <div class="tab-button" onclick="switchRankTab(this)">好友榜</div>
-                </div>
-
-                <!-- 排行榜列表 -->
-                <main class="p-4 pb-24">
-                    <!-- 前三名 -->
-                    <div class="flex justify-between mb-6">
-                        <!-- 第二名 -->
-                        <div class="flex flex-col items-center">
-                            <div class="w-16 h-16 bg-blue-100 rounded-full mb-2 flex items-center justify-center overflow-hidden">
-                                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop&crop=faces" class="w-full h-full object-cover" alt="用户头像">
-                            </div>
-                            <div class="medal medal-2">2</div>
-                            <p class="text-sm font-bold mt-1">李四</p>
-                            <p class="text-xs text-purple-600 font-bold">9800 分</p>
-                        </div>
-                        
-                        <!-- 第一名 -->
-                        <div class="flex flex-col items-center">
-                            <div class="w-20 h-20 bg-yellow-100 rounded-full mb-2 flex items-center justify-center overflow-hidden">
-                                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=faces" class="w-full h-full object-cover" alt="用户头像">
-                            </div>
-                            <div class="medal medal-1">1</div>
-                            <p class="text-sm font-bold mt-1">张三</p>
-                            <p class="text-xs text-purple-600 font-bold">10250 分</p>
-                        </div>
-                        
-                        <!-- 第三名 -->
-                        <div class="flex flex-col items-center">
-                            <div class="w-16 h-16 bg-pink-100 rounded-full mb-2 flex items-center justify-center overflow-hidden">
-                                <img src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=150&h=150&fit=crop&crop=faces" class="w-full h-full object-cover" alt="用户头像">
-                            </div>
-                            <div class="medal medal-3">3</div>
-                            <p class="text-sm font-bold mt-1">王五</p>
-                            <p class="text-xs text-purple-600 font-bold">9500 分</p>
-                        </div>
-                    </div>
-                    
-                    <!-- 其他排名 -->
-                    <div class="space-y-3">
-                        <!-- 第 4-8 名 -->
-                        <div class="rank-card p-3 flex items-center">
-                            <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mr-3">
-                                <span class="text-purple-600 font-bold">4</span>
-                            </div>
-                            <div class="w-10 h-10 rounded-full overflow-hidden mr-3">
-                                <img src="https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=100&h=100&fit=crop&crop=faces" class="w-full h-full object-cover" alt="用户头像">
-                            </div>
-                            <div class="flex-1">
-                                <p class="font-bold">赵六</p>
-                                <p class="text-xs text-gray-500">Level 8</p>
-                            </div>
-                            <div class="text-purple-600 font-bold">9200 分</div>
-                        </div>
-                        
-                        <div class="rank-card p-3 flex items-center">
-                            <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mr-3">
-                                <span class="text-purple-600 font-bold">5</span>
-                            </div>
-                            <div class="w-10 h-10 rounded-full overflow-hidden mr-3">
-                                <img src="https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=100&h=100&fit=crop&crop=faces" class="w-full h-full object-cover" alt="用户头像">
-                            </div>
-                            <div class="flex-1">
-                                <p class="font-bold">钱七</p>
-                                <p class="text-xs text-gray-500">Level 7</p>
-                            </div>
-                            <div class="text-purple-600 font-bold">8800 分</div>
-                        </div>
-                        
-                        <div class="rank-card p-3 flex items-center">
-                            <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mr-3">
-                                <span class="text-purple-600 font-bold">6</span>
-                            </div>
-                            <div class="w-10 h-10 rounded-full overflow-hidden mr-3">
-                                <img src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=100&h=100&fit=crop&crop=faces" class="w-full h-full object-cover" alt="用户头像">
-                            </div>
-                            <div class="flex-1">
-                                <p class="font-bold">孙八</p>
-                                <p class="text-xs text-gray-500">Level 7</p>
-                            </div>
-                            <div class="text-purple-600 font-bold">8500 分</div>
-                        </div>
-                        
-                        <div class="rank-card p-3 flex items-center">
-                            <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mr-3">
-                                <span class="text-purple-600 font-bold">7</span>
-                            </div>
-                            <div class="w-10 h-10 rounded-full overflow-hidden mr-3">
-                                <img src="https://images.unsplash.com/photo-1628157588553-5eeea00af15c?w=100&h=100&fit=crop&crop=faces" class="w-full h-full object-cover" alt="用户头像">
-                            </div>
-                            <div class="flex-1">
-                                <p class="font-bold">周九</p>
-                                <p class="text-xs text-gray-500">Level 6</p>
-                            </div>
-                            <div class="text-purple-600 font-bold">8200 分</div>
-                        </div>
-                        
-                        <div class="rank-card p-3 flex items-center bg-yellow-50 border-2 border-yellow-200">
-                            <div class="w-8 h-8 bg-yellow-200 rounded-full flex items-center justify-center mr-3">
-                                <span class="text-yellow-700 font-bold">8</span>
-                            </div>
-                            <div class="w-10 h-10 rounded-full overflow-hidden mr-3">
-                                <img src="https://images.unsplash.com/photo-1560800452-f2d475982b96?w=100&h=100&fit=crop&crop=faces" class="w-full h-full object-cover" alt="用户头像">
-                            </div>
-                            <div class="flex-1">
-                                <p class="font-bold">小明（我）</p>
-                                <p class="text-xs text-gray-500">Level 5</p>
-                            </div>
-                            <div class="text-purple-600 font-bold">7800 分</div>
-                        </div>
-                    </div>
-                </main>
-                
-                <!-- 底部导航 -->
-                <div class="bottom-nav">
-                    <div class="flex justify-around">
-                        <div class="text-center text-gray-400 nav-item" onclick="showPage('home')">
-                            <i class="fas fa-home text-xl"></i>
-                            <p class="text-xs mt-1">首页</p>
-                        </div>
-                        <div class="text-center text-purple-600 nav-item active">
-                            <i class="fas fa-trophy text-xl"></i>
-                            <p class="text-xs mt-1 font-medium">排行榜</p>
-                        </div>
-                        <div class="text-center text-gray-400 nav-item" onclick="showPage('profile')">
-                            <i class="fas fa-user text-xl"></i>
-                            <p class="text-xs mt-1">我的</p>
-                        </div>
-                        <div class="text-center text-gray-400 nav-item" onclick="showPage('settings')">
-                            <i class="fas fa-cog text-xl"></i>
-                            <p class="text-xs mt-1">设置</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 个人中心页 -->
-        <div id="profile" class="phone-frame page-section">
-            <div class="status-bar flex items-center justify-between text-white">
-                <span>9:41</span>
-                <div class="flex items-center gap-2">
-                    <i class="fas fa-signal"></i>
-                    <i class="fas fa-wifi"></i>
-                    <i class="fas fa-battery-full"></i>
-                </div>
-            </div>
-            
-            <div class="page-content bg-[#f0f1ff]">
-                <!-- 顶部导航 -->
-                <nav class="px-4 py-3 flex items-center justify-between bg-white rounded-b-3xl shadow-md">
-                    <h1 class="text-xl font-bold text-purple-600">个人中心</h1>
-                    <div class="flex items-center">
-                        <i class="fas fa-cog text-gray-500 text-xl mr-3 cursor-pointer" onclick="showPage('settings')"></i>
-                        <i class="fas fa-bell text-gray-500 text-xl cursor-pointer"></i>
-                    </div>
-                </nav>
-
-                <!-- 个人信息卡片 -->
-                <div class="p-4 pb-24">
-                    <div class="profile-card p-5 mb-6" style="background-color: white; border-radius: 20px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);">
-                        <div class="flex items-center">
-                            <div class="w-16 h-16 rounded-full overflow-hidden mr-4">
-                                <img src="https://images.unsplash.com/photo-1560800452-f2d475982b96?w=150&h=150&fit=crop&crop=faces" class="w-full h-full object-cover" alt="用户头像">
-                            </div>
-                            <div class="flex-1">
-                                <h2 class="text-lg font-bold">小明</h2>
-                                <p class="text-sm text-gray-500">ID: 12345678</p>
-                                <div class="flex items-center mt-1">
-                                    <div class="bg-purple-100 text-purple-600 px-2 py-0.5 rounded-full text-xs font-bold mr-2">
-                                        Level 5
+                        <!-- 商品选择 -->
+                        <div class="bg-white rounded-3xl p-4 shadow-sm border border-gray-100">
+                            <div class="text-xs text-gray-500 mb-3">商品选择（一行两个商品卡片，至少选择 1 件）</div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="rounded-2xl border border-gray-100 p-3 bg-white">
+                                    <div class="w-full h-20 rounded-xl bg-gray-100 flex items-center justify-center text-gray-400">
+                                        <i class="fas fa-box"></i>
                                     </div>
-                                    <div class="flex-1">
-                                        <div class="progress-container" style="height: 6px;">
-                                            <div class="progress-bar bg-purple-600" style="width: 70%"></div>
+                                    <div class="mt-2 font-semibold text-sm text-gray-900">芒果 TV 会员月卡</div>
+                                    <div class="text-xs text-gray-500 mt-1">VIP-001 · 30天</div>
+                                    <div class="text-sm font-semibold text-purple-700 mt-1">¥19.9</div>
+                                    <div class="flex items-center justify-between mt-2">
+                                        <button class="control-btn" style="padding:0.35rem 0.65rem;border-radius:10px;" onclick="adjustQty('qty_p1', -1)">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                        <div class="text-sm font-semibold text-gray-900">
+                                            <span id="qty_p1">1</span>
                                         </div>
+                                        <button class="control-btn active" style="padding:0.35rem 0.65rem;border-radius:10px;" onclick="adjustQty('qty_p1', 1)">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="rounded-2xl border border-gray-100 p-3 bg-white">
+                                    <div class="w-full h-20 rounded-xl bg-gray-100 flex items-center justify-center text-gray-400">
+                                        <i class="fas fa-box"></i>
+                                    </div>
+                                    <div class="mt-2 font-semibold text-sm text-gray-900">芒果 TV 会员季卡</div>
+                                    <div class="text-xs text-gray-500 mt-1">VIP-003 · 90天</div>
+                                    <div class="text-sm font-semibold text-purple-700 mt-1">¥59.0</div>
+                                    <div class="flex items-center justify-between mt-2">
+                                        <button class="control-btn" style="padding:0.35rem 0.65rem;border-radius:10px;" onclick="adjustQty('qty_p2', -1)">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                        <div class="text-sm font-semibold text-gray-900">
+                                            <span id="qty_p2">0</span>
+                                        </div>
+                                        <button class="control-btn active" style="padding:0.35rem 0.65rem;border-radius:10px;" onclick="adjustQty('qty_p2', 1)">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
-                            <button class="bg-purple-100 text-purple-600 px-3 py-1 rounded-full text-sm font-bold">
-                                编辑
+                        </div>
+
+                        <!-- 收货地址 -->
+                        <div class="bg-white rounded-3xl p-4 shadow-sm border border-gray-100">
+                            <div class="text-xs text-gray-500 mb-3">收货地址（必填）</div>
+                            <div class="font-semibold text-gray-900">张三（150****8888）</div>
+                            <div class="text-sm text-gray-600 mt-1">浙江省杭州市西湖区文一西路 100 号</div>
+                            <div class="mt-4 flex gap-2">
+                                <button class="submit-btn" style="position: static; width: 100%; background:#fff; color:#667eea; border:2px solid #667eea;" onclick="selectAddress('addressbook')">
+                                    选择其他地址
+                                </button>
+                                <button class="submit-btn" style="position: static; width: 100%;" onclick="selectAddress('new')">
+                                    新建地址
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 小票信息 -->
+                        <div class="bg-white rounded-3xl p-4 shadow-sm border border-gray-100">
+                            <div class="text-xs text-gray-500 mb-3">小票信息（必填）</div>
+                            <div class="text-sm text-gray-500">小票号码</div>
+                            <input id="receiptNo" type="text" placeholder="请输入小票号码" class="mt-2 w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-purple-600">
+
+                            <div class="mt-4 text-sm text-gray-500">小票照片（最多10张）</div>
+                            <input id="receiptPhotos" type="file" accept="image/*" multiple class="mt-2 w-full rounded-2xl border border-gray-200 px-3 py-2 text-sm">
+                            <div class="mt-3 text-xs text-gray-500">原型说明：此处仅模拟上传校验（选择文件后即可通过）。</div>
+                        </div>
+
+                        <!-- 提交流程（对应 PRD：feature_02） -->
+                        <div class="bg-white rounded-3xl p-4 shadow-sm border border-gray-100 prototype-module" data-prototype="feature_02">
+                            <div class="text-xs text-gray-500 mb-2">提交流程</div>
+                            <div class="text-sm text-gray-600">点击“提交”后进行校验：至少 1 件商品、地址已选择、小票号码已填写、小票照片已上传。</div>
+                            <div class="w-full mt-4 first-screen-actions">
+                                <button class="submit-btn" style="width: 100%;" onclick="submitOrder()">
+                                    提交回填单
+                                </button>
+                            </div>
+                            <div class="w-full mt-3">
+                                <button class="submit-btn" style="position: static; width: 100%; background:white; color:#fa8c16; border:2px solid #fa8c16;" onclick="simulateFail()">
+                                    模拟失败（查看反馈）
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- （已按 PRD 5.1.1 合并为单页回填单：#combined） -->
+
+        <!-- 提交反馈页（对应 PRD：feature_04） -->
+        <div id="feedback" class="phone-frame page-section">
+            <div class="phone-notch"></div>
+            <div class="status-bar">
+                <span>9:41</span>
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-signal"></i>
+                    <i class="fas fa-wifi"></i>
+                    <i class="fas fa-battery-full"></i>
+                </div>
+            </div>
+            <div class="page-content">
+                <div class="section prototype-module" data-prototype="feature_04">
+                    <div class="section-title">
+                        <span class="inline-block w-1 h-4 bg-purple-600 rounded mr-2"></span>
+                        提交反馈
+                    </div>
+
+                    <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
+                        <div class="flex items-center gap-3">
+                            <div class="w-14 h-14 rounded-2xl bg-red-50 text-red-500 flex items-center justify-center">
+                                <i class="fas fa-exclamation-circle text-2xl"></i>
+                            </div>
+                            <div>
+                                <div class="text-lg font-semibold text-gray-900">提交失败</div>
+                                <div class="text-sm text-gray-600 mt-1">请检查小票号码和照片后重试。</div>
+                            </div>
+                        </div>
+
+                        <div class="w-full mt-6 space-y-3">
+                            <button class="submit-btn" style="position: static; width: 100%;" onclick="nextPage('combined')">
+                                重试
+                            </button>
+                            <button class="submit-btn" style="position: static; width: 100%; background:#fff; color:#667eea; border:2px solid #667eea;" onclick="nextPage('combined')">
+                                返回并修改
                             </button>
                         </div>
-                        
-                        <div class="flex justify-between mt-6 text-center">
-                            <div>
-                                <p class="text-xl font-bold text-purple-600">1250</p>
-                                <p class="text-xs text-gray-500">积分</p>
-                            </div>
-                            <div class="border-l border-r border-gray-200 px-6">
-                                <p class="text-xl font-bold text-purple-600">8</p>
-                                <p class="text-xs text-gray-500">排名</p>
-                            </div>
-                            <div>
-                                <p class="text-xl font-bold text-purple-600">32</p>
-                                <p class="text-xs text-gray-500">已完成</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- 统计数据 -->
-                    <h3 class="text-lg font-bold mb-3 text-purple-600">答题统计</h3>
-                    <div class="grid grid-cols-2 gap-3 mb-6">
-                        <div class="stat-card p-3" style="background-color: white; border-radius: 15px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);">
-                            <div class="flex items-center">
-                                <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center mr-3">
-                                    <i class="fas fa-check text-green-500"></i>
-                                </div>
-                                <div>
-                                    <p class="text-xs text-gray-500">正确率</p>
-                                    <p class="font-bold">85%</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="stat-card p-3" style="background-color: white; border-radius: 15px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);">
-                            <div class="flex items-center">
-                                <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-3">
-                                    <i class="fas fa-bolt text-blue-500"></i>
-                                </div>
-                                <div>
-                                    <p class="text-xs text-gray-500">平均用时</p>
-                                    <p class="font-bold">12 秒/题</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="stat-card p-3" style="background-color: white; border-radius: 15px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);">
-                            <div class="flex items-center">
-                                <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center mr-3">
-                                    <i class="fas fa-calendar-check text-purple-500"></i>
-                                </div>
-                                <div>
-                                    <p class="text-xs text-gray-500">连续答题</p>
-                                    <p class="font-bold">7 天</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="stat-card p-3" style="background-color: white; border-radius: 15px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);">
-                            <div class="flex items-center">
-                                <div class="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center mr-3">
-                                    <i class="fas fa-trophy text-yellow-500"></i>
-                                </div>
-                                <div>
-                                    <p class="text-xs text-gray-500">获得奖章</p>
-                                    <p class="font-bold">12 个</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- 成就展示 -->
-                    <div class="flex justify-between items-center mb-3">
-                        <h3 class="text-lg font-bold text-purple-600">我的成就</h3>
-                        <span class="text-xs text-gray-500">查看全部 ></span>
-                    </div>
-                    <div class="profile-card p-4 mb-6" style="background-color: white; border-radius: 20px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);">
-                        <div class="flex justify-between">
-                            <div class="flex flex-col items-center">
-                                <div class="achievement bg-yellow-100 mb-2" style="width: 60px; height: 60px; border-radius: 15px; display: flex; align-items: center; justify-content: center;">
-                                    <i class="fas fa-star text-yellow-500 text-2xl"></i>
-                                </div>
-                                <p class="text-xs text-center">答题达人</p>
-                            </div>
-                            <div class="flex flex-col items-center">
-                                <div class="achievement bg-blue-100 mb-2" style="width: 60px; height: 60px; border-radius: 15px; display: flex; align-items: center; justify-content: center;">
-                                    <i class="fas fa-bolt text-blue-500 text-2xl"></i>
-                                </div>
-                                <p class="text-xs text-center">速度之王</p>
-                            </div>
-                            <div class="flex flex-col items-center">
-                                <div class="achievement bg-green-100 mb-2" style="width: 60px; height: 60px; border-radius: 15px; display: flex; align-items: center; justify-content: center;">
-                                    <i class="fas fa-calendar-check text-green-500 text-2xl"></i>
-                                </div>
-                                <p class="text-xs text-center">坚持不懈</p>
-                            </div>
-                            <div class="flex flex-col items-center">
-                                <div class="achievement bg-gray-100 mb-2" style="width: 60px; height: 60px; border-radius: 15px; display: flex; align-items: center; justify-content: center;">
-                                    <i class="fas fa-lock text-gray-400 text-2xl"></i>
-                                </div>
-                                <p class="text-xs text-center">待解锁</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- 最近答题 -->
-                    <div class="flex justify-between items-center mb-3">
-                        <h3 class="text-lg font-bold text-purple-600">最近答题</h3>
-                        <span class="text-xs text-gray-500">查看全部 ></span>
-                    </div>
-                    <div class="profile-card p-4" style="background-color: white; border-radius: 20px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);">
-                        <div class="space-y-4">
-                            <div class="flex items-center">
-                                <div class="w-12 h-12 rounded-lg bg-purple-100 flex items-center justify-center mr-3">
-                                    <i class="fas fa-music text-purple-500"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <h4 class="font-bold">周杰伦专题挑战</h4>
-                                    <p class="text-xs text-gray-500">得分：950/1000</p>
-                                </div>
-                                <span class="text-xs text-gray-500">昨天</span>
-                            </div>
-                            <div class="flex items-center">
-                                <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center mr-3">
-                                    <i class="fas fa-film text-blue-500"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <h4 class="font-bold">经典电影知识</h4>
-                                    <p class="text-xs text-gray-500">得分：800/1000</p>
-                                </div>
-                                <span class="text-xs text-gray-500">3 天前</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- 底部导航 -->
-                <div class="bottom-nav">
-                    <div class="flex justify-around">
-                        <div class="text-center text-gray-400 nav-item" onclick="showPage('home')">
-                            <i class="fas fa-home text-xl"></i>
-                            <p class="text-xs mt-1">首页</p>
-                        </div>
-                        <div class="text-center text-gray-400 nav-item" onclick="showPage('ranking')">
-                            <i class="fas fa-trophy text-xl"></i>
-                            <p class="text-xs mt-1">排行榜</p>
-                        </div>
-                        <div class="text-center text-purple-600 nav-item active">
-                            <i class="fas fa-user text-xl"></i>
-                            <p class="text-xs mt-1 font-medium">我的</p>
-                        </div>
-                        <div class="text-center text-gray-400 nav-item" onclick="showPage('settings')">
-                            <i class="fas fa-cog text-xl"></i>
-                            <p class="text-xs mt-1">设置</p>
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- 设置页 -->
-        <div id="settings" class="phone-frame page-section">
-            <div class="status-bar flex items-center justify-between text-white">
+        <!-- 提交成功页 -->
+        <div id="success" class="phone-frame page-section">
+            <div class="phone-notch"></div>
+            <div class="status-bar">
                 <span>9:41</span>
                 <div class="flex items-center gap-2">
                     <i class="fas fa-signal"></i>
@@ -1208,144 +597,107 @@
                 </div>
             </div>
             
-            <div class="page-content bg-[#f0f1ff]">
-                <!-- 顶部导航 -->
-                <nav class="px-4 py-3 flex items-center justify-between bg-white rounded-b-3xl shadow-md">
-                    <div class="flex items-center">
-                        <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mr-3 cursor-pointer" onclick="showPage('home')">
-                            <i class="fas fa-arrow-left text-purple-600"></i>
+            <div class="page-content">
+                <!-- 成功模块 -->
+                <div class="section prototype-module" data-prototype="back_form_success">
+                    <div class="flex flex-col items-center justify-center pt-20">
+                        <div class="success-icon" style="width: 100px; height: 100px; font-size: 48px;">
+                            <i class="fas fa-check"></i>
                         </div>
-                        <h1 class="text-xl font-bold text-purple-600">设置</h1>
+                        <div class="success-title" style="font-size: 24px; margin-top: 16px;">提交成功</div>
+                        <div class="success-orderno" style="font-size: 16px; margin-top: 8px;">
+                            回填单号：<span class="font-bold text-purple-600">HT202603300001</span>
+                        </div>
+                        
+                        <!-- 商品信息 -->
+                        <div class="w-full max-w-xs mt-8 bg-gray-50 rounded-lg p-4">
+                            <div class="text-sm font-bold text-gray-700 mb-2">商品列表</div>
+                            <div class="space-y-2 text-xs text-gray-600">
+                                <div class="flex justify-between">
+                                    <span>预售商品 A</span>
+                                    <span>x2</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>预售商品 B</span>
+                                    <span>x1</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 收货地址 -->
+                        <div class="w-full max-w-xs mt-4 bg-gray-50 rounded-lg p-4">
+                            <div class="text-sm font-bold text-gray-700 mb-2">收货地址</div>
+                            <div class="text-xs text-gray-600">
+                                北京市朝阳区 XX 街道 XX 小区 1-1-101
+                            </div>
+                        </div>
+                        
+                        <!-- 小票号码 -->
+                        <div class="w-full max-w-xs mt-4 bg-gray-50 rounded-lg p-4">
+                            <div class="text-sm font-bold text-gray-700 mb-2">小票号码</div>
+                            <div class="text-xs text-gray-600 font-mono">
+                                1234567890
+                            </div>
+                        </div>
+                        
+                        <!-- 保存到相册按钮 -->
+                        <div class="w-full max-w-xs mt-8">
+                            <button class="submit-btn" style="position: static; width: 100%; background: linear-gradient(135deg, #00b894, #00a884);" onclick="saveToAlbum()">
+                                <i class="fas fa-camera mr-2"></i>保存到相册
+                            </button>
+                        </div>
                     </div>
-                </nav>
+                </div>
+            </div>
+        </div>
 
-                <!-- 设置内容 -->
-                <div class="p-4 pb-24">
-                    <!-- 账号设置 -->
-                    <h2 class="text-lg font-bold mb-3 text-purple-600 px-2">账号设置</h2>
-                    <div class="settings-card">
-                        <div class="settings-item">
-                            <div class="flex items-center">
-                                <div class="icon-container bg-purple-100">
-                                    <i class="fas fa-user text-purple-600"></i>
-                                </div>
-                                <span>个人资料</span>
-                            </div>
-                            <i class="fas fa-chevron-right text-gray-400"></i>
+        <!-- 提交成功弹窗（隐藏，默认不显示） -->
+        <div id="successModal" class="success-modal" style="display: none;">
+            <div class="success-content">
+                <div class="success-icon">
+                    <i class="fas fa-check"></i>
+                </div>
+                <div class="success-title">提交成功</div>
+                <div class="success-orderno">
+                    回填单号：<span class="font-bold text-purple-600">HT202603300001</span>
+                </div>
+                
+                <!-- 商品信息 -->
+                <div class="w-full max-w-xs mt-8 bg-gray-50 rounded-lg p-4">
+                    <div class="text-sm font-bold text-gray-700 mb-2">商品列表</div>
+                    <div class="space-y-2 text-xs text-gray-600">
+                        <div class="flex justify-between">
+                            <span>预售商品 A</span>
+                            <span>x2</span>
                         </div>
-                        <div class="settings-item">
-                            <div class="flex items-center">
-                                <div class="icon-container bg-blue-100">
-                                    <i class="fas fa-lock text-blue-600"></i>
-                                </div>
-                                <span>账号安全</span>
-                            </div>
-                            <i class="fas fa-chevron-right text-gray-400"></i>
-                        </div>
-                        <div class="settings-item">
-                            <div class="flex items-center">
-                                <div class="icon-container bg-green-100">
-                                    <i class="fas fa-bell text-green-600"></i>
-                                </div>
-                                <span>消息通知</span>
-                            </div>
-                            <i class="fas fa-chevron-right text-gray-400"></i>
-                        </div>
-                    </div>
-                    
-                    <!-- 通用设置 -->
-                    <h2 class="text-lg font-bold mb-3 mt-6 text-purple-600 px-2">通用设置</h2>
-                    <div class="settings-card">
-                        <div class="settings-item">
-                            <div class="flex items-center">
-                                <div class="icon-container bg-yellow-100">
-                                    <i class="fas fa-moon text-yellow-600"></i>
-                                </div>
-                                <span>深色模式</span>
-                            </div>
-                            <label class="toggle">
-                                <input type="checkbox" onchange="toggleDarkMode(this)">
-                                <span class="slider"></span>
-                            </label>
-                        </div>
-                        <div class="settings-item">
-                            <div class="flex items-center">
-                                <div class="icon-container bg-red-100">
-                                    <i class="fas fa-volume-up text-red-600"></i>
-                                </div>
-                                <span>声音效果</span>
-                            </div>
-                            <label class="toggle">
-                                <input type="checkbox" checked onchange="toggleSound(this)">
-                                <span class="slider"></span>
-                            </label>
-                        </div>
-                        <div class="settings-item">
-                            <div class="flex items-center">
-                                <div class="icon-container bg-indigo-100">
-                                    <i class="fas fa-language text-indigo-600"></i>
-                                </div>
-                                <span>语言</span>
-                            </div>
-                            <div class="flex items-center">
-                                <span class="text-sm text-gray-500 mr-2">简体中文</span>
-                                <i class="fas fa-chevron-right text-gray-400"></i>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- 其他设置 -->
-                    <h2 class="text-lg font-bold mb-3 mt-6 text-purple-600 px-2">其他设置</h2>
-                    <div class="settings-card">
-                        <div class="settings-item">
-                            <div class="flex items-center">
-                                <div class="icon-container bg-pink-100">
-                                    <i class="fas fa-question-circle text-pink-600"></i>
-                                </div>
-                                <span>帮助与反馈</span>
-                            </div>
-                            <i class="fas fa-chevron-right text-gray-400"></i>
-                        </div>
-                        <div class="settings-item">
-                            <div class="flex items-center">
-                                <div class="icon-container bg-orange-100">
-                                    <i class="fas fa-info-circle text-orange-600"></i>
-                                </div>
-                                <span>关于我们</span>
-                            </div>
-                            <i class="fas fa-chevron-right text-gray-400"></i>
-                        </div>
-                        <div class="settings-item" onclick="showPage('home')">
-                            <div class="flex items-center">
-                                <div class="icon-container bg-red-100">
-                                    <i class="fas fa-sign-out-alt text-red-600"></i>
-                                </div>
-                                <span class="text-red-500">退出登录</span>
-                            </div>
+                        <div class="flex justify-between">
+                            <span>预售商品 B</span>
+                            <span>x1</span>
                         </div>
                     </div>
                 </div>
                 
-                <!-- 底部导航 -->
-                <div class="bottom-nav">
-                    <div class="flex justify-around">
-                        <div class="text-center text-gray-400 nav-item" onclick="showPage('home')">
-                            <i class="fas fa-home text-xl"></i>
-                            <p class="text-xs mt-1">首页</p>
-                        </div>
-                        <div class="text-center text-gray-400 nav-item" onclick="showPage('ranking')">
-                            <i class="fas fa-trophy text-xl"></i>
-                            <p class="text-xs mt-1">排行榜</p>
-                        </div>
-                        <div class="text-center text-gray-400 nav-item" onclick="showPage('profile')">
-                            <i class="fas fa-user text-xl"></i>
-                            <p class="text-xs mt-1">我的</p>
-                        </div>
-                        <div class="text-center text-purple-600 nav-item active">
-                            <i class="fas fa-cog text-xl"></i>
-                            <p class="text-xs mt-1 font-medium">设置</p>
-                        </div>
+                <!-- 收货地址 -->
+                <div class="w-full max-w-xs mt-4 bg-gray-50 rounded-lg p-4">
+                    <div class="text-sm font-bold text-gray-700 mb-2">收货地址</div>
+                    <div class="text-xs text-gray-600">
+                        北京市朝阳区 XX 街道 XX 小区 1-1-101
                     </div>
+                </div>
+                
+                <!-- 小票号码 -->
+                <div class="w-full max-w-xs mt-4 bg-gray-50 rounded-lg p-4">
+                    <div class="text-sm font-bold text-gray-700 mb-2">小票号码</div>
+                    <div class="text-xs text-gray-600 font-mono">
+                        1234567890
+                    </div>
+                </div>
+                
+                <!-- 保存到相册按钮 -->
+                <div class="w-full max-w-xs mt-8">
+                    <button class="submit-btn" style="position: static; width: 100%; background: linear-gradient(135deg, #00b894, #00a884);" onclick="saveToAlbum()">
+                        <i class="fas fa-camera mr-2"></i>保存到相册
+                    </button>
                 </div>
             </div>
         </div>
@@ -1353,11 +705,6 @@
     </div>
 
     <script>
-        // 当前题目计数器
-        let currentQuestion = 1;
-        const totalQuestions = 10;
-        let correctAnswers = 0;
-        
         // 全局视图状态
         let isGlobalView = true;
         
@@ -1402,8 +749,8 @@
                     section.style.display = 'none';
                 });
                 
-                // 显示第一个页面（home）
-                showPage('home');
+                // 显示第一个页面（combined）
+                showPage('combined');
             }
             
             // 滚动到顶部
@@ -1416,7 +763,7 @@
             const tabs = document.getElementById('tabsContainer');
             const btn = document.getElementById('globalViewBtn');
             
-            // 恢复到全局视图 - 响应式网格布局
+            // 恢复到全局视图
             isGlobalView = true;
             container.classList.add('global-view');
             tabs.classList.add('hidden');
@@ -1480,10 +827,9 @@
                 targetSection.classList.add('highlighted');
                 
                 // 更新对应标签按钮
-                const tabIndex = ['home', 'quiz', 'result', 'ranking', 'profile', 'settings'].indexOf(pageId);
-                if (tabIndex !== -1) {
-                    document.querySelectorAll('.tab-btn')[tabIndex].classList.add('active');
-                }
+                const tabIds = ['combined', 'success'];
+                const tabIndex = tabIds.indexOf(pageId);
+                if (tabIndex !== -1) document.querySelectorAll('.tab-btn')[tabIndex].classList.add('active');
                 
                 // 更新 URL 锚点
                 window.location.hash = pageId;
@@ -1493,137 +839,224 @@
             }
         }
         
-        // 开始答题
-        function startQuiz(title, category, questions) {
-            document.getElementById('quiz-title').textContent = title;
-            document.getElementById('total-questions').textContent = `${questions}题`;
-            currentQuestion = 1;
-            correctAnswers = 0;
-            updateQuestionDisplay();
-            showPage('quiz');
+        // 页面跳转
+        function nextPage(pageId) {
+            showPage(pageId);
         }
         
-        // 更新题目显示
-        function updateQuestionDisplay() {
-            document.getElementById('current-question').textContent = currentQuestion;
-            const progress = (currentQuestion / totalQuestions) * 100;
-            document.getElementById('progress-bar').style.width = `${progress}%`;
+        function previousPage(pageId) {
+            showPage(pageId);
+        }
+
+        // 原型交互：数量调整/地址选择/失败模拟
+        function adjustQty(qtyId, delta) {
+            const el = document.getElementById(qtyId);
+            if (!el) return;
+            const current = parseInt(el.textContent || '0', 10);
+            const next = Math.max(0, current + delta);
+            el.textContent = String(next);
+        }
+
+        function selectAddress(source) {
+            // 原型占位：这里仅用于展示“选择地址”的触发行为
+            // 真实项目中可替换为地址选择/回填接口
+            console.log('selectAddress:', source);
+        }
+
+        function simulateFail() {
+            alert('提交失败，请检查信息后重试');
+            showPage('combined');
         }
         
-        // 选择答案
-        function selectAnswer(button, isCorrect) {
-            // 重置所有按钮样式
-            document.querySelectorAll('.option-btn').forEach(btn => {
-                btn.classList.remove('bg-green-200', 'border-green-500');
-                btn.style.borderColor = '';
-            });
+        // 提交订单
+        function submitOrder() {
+            const receiptNo = document.getElementById('receiptNo').value;
+            const photosInput = document.getElementById('receiptPhotos');
+            const photosCount = photosInput && photosInput.files ? photosInput.files.length : 0;
+            if (!receiptNo) {
+                alert('请输入小票号码');
+                showPage('combined');
+                return;
+            }
             
-            if (isCorrect) {
-                // 添加正确答案的样式
-                button.classList.add('bg-green-200');
-                button.style.borderColor = '#48bb78';
-                correctAnswers++;
-                
-                // 显示 Lottie 动画
-                const container = document.getElementById('lottie-container');
-                container.style.display = 'block';
+            if (!photosCount) {
+                alert('请先上传小票照片');
+                showPage('combined');
+                return;
+            }
 
-                // 加载并播放动画
-                const anim = lottie.loadAnimation({
-                    container: container,
-                    renderer: 'svg',
-                    loop: false,
-                    autoplay: true,
-                    path: 'https://assets2.lottiefiles.com/packages/lf20_u4yrau.json'
-                });
-
-                anim.addEventListener('complete', () => {
-                    container.style.display = 'none';
-                });
-            } else {
-                // 错误答案显示红色
-                button.classList.add('bg-red-200');
-                button.style.borderColor = '#f56565';
+            // 显示成功弹窗，并跳转到提交结果页
+            showSuccessModal();
+            showPage('success');
+        }
+        
+        // 显示成功弹窗
+        function showSuccessModal() {
+            const modal = document.getElementById('successModal');
+            if (modal) {
+                modal.style.display = 'flex';
+            }
+        }
+        
+        // 关闭成功弹窗
+        function closeSuccessModal() {
+            const modal = document.getElementById('successModal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+        
+        // 查看订单
+        function viewOrder() {
+            alert('跳转到订单详情页');
+        }
+        
+        // 保存到相册
+        function saveToAlbum() {
+            // 原型演示：模拟保存到相册操作
+            const successContent = document.querySelector('.success-content') || document.querySelector('.success-module .flex');
+            if (successContent) {
+                // 创建提示消息
+                const toast = document.createElement('div');
+                toast.style.cssText = `
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background: rgba(0, 0, 0, 0.8);
+                    color: white;
+                    padding: 1rem 2rem;
+                    border-radius: 8px;
+                    font-size: 1rem;
+                    z-index: 9999;
+                    text-align: center;
+                `;
+                toast.innerHTML = '<i class="fas fa-check-circle mr-2"></i>已保存到相册';
+                document.body.appendChild(toast);
                 
-                // 显示正确答案
-                document.querySelectorAll('.option-btn').forEach((btn, index) => {
-                    if (index === 0) { // 假设第一个是正确答案
-                        btn.classList.add('bg-green-200');
-                        btn.style.borderColor = '#48bb78';
+                setTimeout(() => {
+                    toast.remove();
+                }, 2000);
+            }
+        }
+        
+        // 接收主控文档联动指令
+        window.addEventListener('message', function(e) {
+            if (e.data.action === 'highlight' && e.data.featureId) {
+                // 移除所有高亮
+                document.querySelectorAll('.prototype-module').forEach(module => {
+                    module.classList.remove('feature-highlight');
+                });
+                // 高亮对应模块
+                const aliasMap = {
+                    back_form_edit: 'feature_01',
+                    back_form_success: 'feature_03',
+                    feature_01: 'back_form_edit',
+                    feature_03: 'back_form_success'
+                };
+                const fid = String(e.data.featureId);
+                const candidates = [fid, aliasMap[fid]].filter(Boolean);
+                const selector = candidates.map(id => `.prototype-module[data-prototype="${id}"]`).join(',');
+                const targetModule = document.querySelector(selector);
+                if (targetModule) {
+                    // 如果在单页视图，确保对应页面可见
+                    const pageSection = targetModule.closest('.page-section');
+                    if (pageSection && !isGlobalView) {
+                        const pageId = pageSection.id;
+                        performShowPage(pageId);
                     }
-                });
+
+                    targetModule.classList.add('feature-highlight');
+                    targetModule.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
             }
-        }
-        
-        // 下一题
-        function nextQuestion() {
-            if (currentQuestion < totalQuestions) {
-                currentQuestion++;
-                updateQuestionDisplay();
-                
-                // 重置选项样式
-                document.querySelectorAll('.option-btn').forEach(btn => {
-                    btn.classList.remove('bg-green-200', 'bg-red-200', 'border-green-500', 'border-red-500');
-                    btn.style.borderColor = '';
-                });
-            } else {
-                // 显示结果
-                showResult();
+            
+            // 接收页面切换指令
+            if (e.data.action === 'navigate' && e.data.pageId) {
+                showPage(e.data.pageId);
             }
-        }
-        
-        // 显示结果
-        function showResult() {
-            const score = Math.round((correctAnswers / totalQuestions) * 100);
-            document.getElementById('score').textContent = score;
-            document.getElementById('accuracy').textContent = `${correctAnswers}/${totalQuestions}`;
-            showPage('result');
-        }
-        
-        // 重新开始答题
-        function restartQuiz() {
-            startQuiz(document.getElementById('quiz-title').textContent, '音乐', totalQuestions);
-        }
-        
-        // 查看解析
-        function showAnalysis() {
-            alert('查看解析功能开发中...');
-        }
-        
-        // 分享战绩
-        function shareResult() {
-            alert('分享功能开发中...');
-        }
-        
-        // 切换排行榜标签
-        function switchRankTab(button) {
-            document.querySelectorAll('.tab-button').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            button.classList.add('active');
-        }
-        
-        // 切换深色模式
-        function toggleDarkMode(checkbox) {
-            console.log('深色模式:', checkbox.checked ? '开启' : '关闭');
-        }
-        
-        // 切换声音效果
-        function toggleSound(checkbox) {
-            console.log('声音效果:', checkbox.checked ? '开启' : '关闭');
-        }
+        });
         
         // 页面加载时检查 URL 锚点
         window.addEventListener('DOMContentLoaded', function() {
             const hash = window.location.hash.substring(1);
+            const validPages = ['combined', 'success'];
+
+            // Focus Mode：通过 URL 参数直接进入并联动高亮
+            const params = new URLSearchParams(window.location.search);
+            const focusId = params.get('focus');
+
+            // featureId -> 对应 pageId（用于 Focus 模式自动切页）
+            const featureIdToPageId = (id) => {
+                if (id === 'back_form_edit') return 'combined';
+                if (id === 'feature_01') return 'combined';
+                if (id === 'feature_02') return 'combined';
+                if (id === 'back_form_success') return 'success';
+                if (id === 'feature_03') return 'success';
+                if (id === 'feature_04') return 'combined';
+                return null;
+            };
+
+            if (focusId) {
+                const targetPageId = featureIdToPageId(focusId);
+                if (targetPageId && validPages.includes(targetPageId)) {
+                    isGlobalView = false;
+                    document.getElementById('prototypeContainer').classList.remove('global-view');
+                    document.getElementById('tabsContainer').classList.remove('hidden');
+                    document.getElementById('globalViewBtn').classList.remove('active');
+                    document.getElementById('globalViewBtn').innerHTML = '<i class="fas fa-th-large"></i><span>单页视图</span>';
+
+                    // 隐藏所有页面，只显示目标页
+                    document.querySelectorAll('.page-section').forEach(section => {
+                        section.style.display = 'none';
+                        section.classList.remove('active');
+                    });
+
+                    setTimeout(() => {
+                        performShowPage(targetPageId);
+
+                        // 同步高亮对应功能模块
+                        document.querySelectorAll('.prototype-module').forEach(module => {
+                            module.classList.remove('feature-highlight');
+                        });
+                        const aliasMap = {
+                            back_form_edit: 'feature_01',
+                            back_form_success: 'feature_03',
+                            feature_01: 'back_form_edit',
+                            feature_03: 'back_form_success'
+                        };
+                        const fid = String(focusId);
+                        const candidates = [fid, aliasMap[fid]].filter(Boolean);
+                        const selector = candidates.map(id => `.prototype-module[data-prototype="${id}"]`).join(',');
+                        const targetModule = document.querySelector(selector);
+                        if (targetModule) {
+                            targetModule.classList.add('feature-highlight');
+                            targetModule.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                    }, 0);
+                    return;
+                }
+            }
             
             // 默认显示全局视图
-            if (hash && ['home', 'quiz', 'result', 'ranking', 'profile', 'settings'].includes(hash)) {
+            if (hash && validPages.includes(hash)) {
                 // 如果有特定锚点，切换到单页视图并显示该页面
-                toggleGlobalView();
+                isGlobalView = false;
+                document.getElementById('prototypeContainer').classList.remove('global-view');
+                document.getElementById('tabsContainer').classList.remove('hidden');
+                document.getElementById('globalViewBtn').classList.remove('active');
+                document.getElementById('globalViewBtn').innerHTML = '<i class="fas fa-th-large"></i><span>单页视图</span>';
+                
+                // 隐藏所有页面
+                document.querySelectorAll('.page-section').forEach(section => {
+                    section.style.display = 'none';
+                    section.classList.remove('active');
+                });
+                
+                // 显示目标页面
                 setTimeout(() => {
                     performShowPage(hash);
-                }, 300);
+                }, 100);
             } else {
                 // 否则保持全局视图
                 isGlobalView = true;
@@ -1633,6 +1066,7 @@
                 // 显示所有页面
                 document.querySelectorAll('.page-section').forEach(section => {
                     section.style.display = 'block';
+                    section.classList.add('active');
                 });
             }
         });
@@ -1640,8 +1074,18 @@
         // 监听 hash 变化
         window.addEventListener('hashchange', function() {
             const hash = window.location.hash.substring(1);
-            if (hash && ['home', 'quiz', 'result', 'ranking', 'profile', 'settings'].includes(hash)) {
-                showPage(hash);
+            const validPages = ['combined', 'success'];
+            
+            if (hash && validPages.includes(hash)) {
+                // 如果当前是全局视图，切换到单页视图
+                if (isGlobalView) {
+                    toggleGlobalView();
+                    setTimeout(() => {
+                        performShowPage(hash);
+                    }, 300);
+                } else {
+                    performShowPage(hash);
+                }
             }
         });
     </script>

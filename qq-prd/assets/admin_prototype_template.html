@@ -1,562 +1,937 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <title>商品限购策略原型 v1.4</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
-  <style>
-    body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; background:#f5f7fa; color:#1f2329; }
-    .el-container { height: 100vh; }
-    .el-header { background: #1f2329; color: #fff; display: flex; align-items: center; padding: 0 20px; }
-    .el-aside { width: 200px; background: #fff; }
-    .el-main { padding: 20px; }
-    .table-header { margin-bottom: 16px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-    .active-focus { box-shadow: 0 0 0 3px rgba(255,125,0,0.3); border-radius: 6px; }
-    .form-card { background: #fff; border-radius: 8px; padding: 24px; margin-bottom: 20px; }
-    .form-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #ebeef5; }
-    .form-section { margin-bottom: 20px; }
-    .form-section-title { font-size: 14px; font-weight: 600; margin-bottom: 12px; color: #303133; }
-    .warning-box { background: #fff3e0; border: 1px solid #ffb74d; border-radius: 4px; padding: 12px 16px; margin: 16px 0; }
-    .warning-title { color: #e65100; font-weight: 600; margin-bottom: 4px; }
-    .el-breadcrumb { margin: 8px 0 12px; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>快闪店预售商品回填单 - 运营后台原型</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+        .sidebar {
+            width: 220px;
+            background: #1a1a2e;
+            min-height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 1000;
+        }
+        .sidebar-logo {
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .sidebar-menu {
+            padding: 16px 0;
+        }
+        .menu-group-title {
+            padding: 12px 24px;
+            color: rgba(255,255,255,0.9);
+            font-weight: 700;
+            font-size: 14px;
+            margin-top: 6px;
+        }
+        .menu-subitem {
+            margin-left: 12px;
+            padding-left: 36px !important;
+        }
+        .menu-item {
+            padding: 12px 24px;
+            color: rgba(255,255,255,0.7);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s;
+        }
+        .menu-item:hover, .menu-item.active {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+        .menu-item i { font-size: 18px; }
+        .main-content {
+            margin-left: 220px;
+            padding: 24px;
+        }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+        }
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 24px;
+        }
+        .card-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            font-weight: 600;
+            color: #333;
+        }
+        .card-body { padding: 20px; }
+        .table { margin-bottom: 0; }
+        .table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        .table td { vertical-align: middle; }
+        .badge-pending { background: #fff3cd; color: #856404; }
+        .badge-passed { background: #d4edda; color: #155724; }
+        .badge-rejected { background: #f8d7da; color: #721c24; }
+        .btn-action {
+            padding: 4px 12px;
+            font-size: 13px;
+            border-radius: 4px;
+        }
+        .filter-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .filter-bar select, .filter-bar input {
+            padding: 8px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        .filter-bar input { width: 200px; }
+        .detail-section {
+            padding: 20px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .detail-section:last-child { border-bottom: none; }
+        .detail-label {
+            font-size: 13px;
+            color: #999;
+            margin-bottom: 6px;
+        }
+        .detail-value {
+            font-size: 14px;
+            color: #333;
+        }
+        .product-thumb {
+            width: 60px;
+            height: 60px;
+            background: #f5f5f5;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+        }
+        .product-info { display: flex; align-items: center; }
+        .modal-content { border-radius: 12px; }
+        .feature-highlight {
+            border: 2px solid #ff4d4f !important;
+            box-shadow: 0 0 0 4px rgba(255, 77, 79, 0.2);
+            transition: all 0.3s;
+        }
+        .page-section { display: none; }
+        .page-section.active { display: block; }
+        .activity-card { border: 2px dashed #e8e8e8; border-radius: 12px; padding: 20px; margin: 12px 0; transition: all 0.2s; }
+        .activity-card:hover { border-color: #667eea; }
+        .qr-code { width: 120px; height: 120px; background: #f5f5f5; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .product-card { border: 1px solid #e0e0e0; border-radius: 8px; padding: 16px; display: flex; gap: 16px; margin-bottom: 12px; }
+        .product-img { width: 80px; height: 80px; background: #f5f5f5; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+        }
+        .status-dot.active { background: #52c41a; }
+        .status-dot.inactive { background: #d9d9d9; }
+        .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-right: 4px;
+        }
+        .tag-blue { background: #e6f7ff; color: #1890ff; border: 1px solid #91d5ff; }
+        .tag-green { background: #f6ffed; color: #52c41a; border: 1px solid #b7eb8f; }
+        .tag-orange { background: #fff7e6; color: #fa8c16; border: 1px solid #ffd591; }
+    </style>
 </head>
 <body>
-  <div id="app">
-    <el-container>
-      <el-header>
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <i class="el-icon-s-custom" style="color: #ff7d00;"></i>
-          <span>商品限购策略原型 v1.4</span>
+    <!-- 侧边栏 -->
+    <div class="sidebar">
+        <div class="sidebar-logo">
+            <i class="bi bi-shop"></i>
+            <span style="margin-left: 8px;">快闪店管理</span>
         </div>
-        <div style="margin-left: auto; display: flex; gap: 8px; align-items: center;">
-          <i class="el-icon-user"></i>
-          <span>{{ userNickname }}</span>
+        <div class="sidebar-menu">
+            <div class="menu-group-title">
+                <i class="bi bi-shop-window"></i>
+                <span style="margin-left: 8px;">快闪店</span>
+            </div>
+
+            <div class="menu-item menu-subitem active" id="menu-activity" onclick="showPage('activity')">
+                <i class="bi bi-calendar-event"></i>
+                <span>线下场次管理</span>
+            </div>
+
+            <div class="menu-item menu-subitem" id="menu-review" onclick="showPage('review')">
+                <i class="bi bi-file-earmark-text"></i>
+                <span>回填单管理</span>
+            </div>
         </div>
-      </el-header>
-      <el-container>
-        <el-aside width="200px">
-          <el-menu :default-active="menuActive" unique-opened>
-            <el-submenu index="3">
-              <template slot="title">
-                <i class="el-icon-goods"></i>
-                <span>商品平台</span>
-              </template>
-              <el-menu-item index="3-1" @click="go('#crowd/list')">人群包策略</el-menu-item>
-              <el-menu-item index="3-2" @click="go('#strategy/list')">限购策略</el-menu-item>
-            </el-submenu>
-          </el-menu>
-        </el-aside>
-        <el-main>
-          <el-breadcrumb separator="/">
-            <el-breadcrumb-item>商品平台</el-breadcrumb-item>
-            <el-breadcrumb-item v-if="route==='strategy/list'">限购策略</el-breadcrumb-item>
-            <el-breadcrumb-item v-if="route==='strategy/create'">限购策略新建/编辑</el-breadcrumb-item>
-            <el-breadcrumb-item v-if="route==='crowd/list'">人群包策略</el-breadcrumb-item>
-            <el-breadcrumb-item v-if="route==='crowd/create'">人群包新建/编辑</el-breadcrumb-item>
-          </el-breadcrumb>
-
-          <!-- 限购策略列表 -->
-          <div v-if="route==='strategy/list'">
-            <div class="table-header">
-              <el-input v-model="filters.strategyName" placeholder="策略名称/ID" style="width: 240px;"></el-input>
-              <el-select v-model="filters.strategyType" placeholder="策略类型" style="width: 180px;">
-                <el-option label="SPU限购" value="SPU"></el-option>
-                <el-option label="SKU限购" value="SKU"></el-option>
-              </el-select>
-              <el-button type="primary" @click="applyFilters">查询</el-button>
-              <el-button @click="resetFilters">重置</el-button>
-              <div style="margin-left:auto;">
-                <el-button type="primary" @click="go('#strategy/create')">创建策略</el-button>
-              </div>
+    </div>
+    
+    <!-- 活动管理页面 -->
+    <div class="main-content page-section active" id="page-activity">
+        <div class="page-header">
+            <div class="page-title">活动管理</div>
+            <button class="btn btn-primary" onclick="showModal('activityModal')">
+                <i class="bi bi-plus-lg"></i> 新增活动
+            </button>
+        </div>
+        
+        <div class="card">
+            <div class="card-body">
+                <div class="filter-bar">
+                    <select class="form-select" style="width: 150px;">
+                        <option value="">全部状态</option>
+                        <option value="1" selected>启用</option>
+                        <option value="0">禁用</option>
+                    </select>
+                    <input type="text" placeholder="搜索活动名称">
+                    <button class="btn btn-primary">搜索</button>
+                </div>
             </div>
-            <el-table :data="filteredStrategies" style="width: 100%" border>
-              <el-table-column prop="id" label="ID" width="120"></el-table-column>
-              <el-table-column prop="name" label="策略名称" min-width="160"></el-table-column>
-              <el-table-column prop="typeLabel" label="策略类型" width="120"></el-table-column>
-              <el-table-column prop="bindProducts" label="商品名称" min-width="200">
-                <template slot-scope="scope">
-                  <span v-if="scope.row.bindProducts && scope.row.bindProducts.length > 0">
-                    <el-tag v-for="(p, i) in scope.row.bindProducts.slice(0, 3)" :key="i" style="margin-right: 4px;">{{ p }}</el-tag>
-                    <span v-if="scope.row.bindProducts.length > 3" style="color: #909399;">...</span>
-                  </span>
-                  <span v-else>-</span>
-                </template>
-              </el-table-column>
-              <el-table-column prop="periodLabel" label="周期" width="220"></el-table-column>
-              <el-table-column prop="limitQty" label="数量上限" width="120"></el-table-column>
-              <el-table-column prop="crowdName" label="人群包" width="160"></el-table-column>
-              <el-table-column prop="statusLabel" label="状态" width="100"></el-table-column>
-              <el-table-column prop="updatedBy" label="创建人/更新时间" min-width="220">
-                <template slot-scope="scope">
-                  <div>{{ scope.row.createdBy }} / {{ scope.row.updatedAt }}</div>
-                </template>
-              </el-table-column>
-              <el-table-column label="操作" width="160">
-                <template slot-scope="scope">
-                  <el-link type="primary" @click="previewStrategy(scope.row)">查看</el-link>
-                  <el-link type="primary" @click="editStrategy(scope.row)">编辑</el-link>
-                  <el-switch v-model="scope.row.enabled" active-text="启用" inactive-text="停用" @change="toggleStrategy(scope.row)"></el-switch>
-                </template>
-              </el-table-column>
-            </el-table>
-          </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">活动列表</div>
+            <div class="card-body" style="padding: 0;">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>活动 ID</th>
+                            <th>活动名称</th>
+                            <th>订单渠道</th>
+                            <th>商品池</th>
+                            <th>活动时间</th>
+                            <th>状态</th>
+                            <th>回填单数</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="prototype-module" data-prototype="activity_admin">
+                            <td>ACT001</td>
+                            <td>快闪店预售活动</td>
+                            <td>线下渠道 A</td>
+                            <td>会员商品池</td>
+                            <td>2026-03-30 ~ 2026-04-30</td>
+                            <td><span class="badge badge-passed">启用</span></td>
+                            <td>156</td>
+                            <td>
+                                <button class="btn btn-outline-primary btn-action" onclick="showModal('activityModal')">编辑</button>
+                                <button class="btn btn-outline-secondary btn-action" onclick="showModal('qrModal')">二维码</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ACT002</td>
+                            <td>五一促销专场</td>
+                            <td>线下渠道 B</td>
+                            <td>电器商品池</td>
+                            <td>2026-05-01 ~ 2026-05-07</td>
+                            <td><span class="badge badge-pending">待启用</span></td>
+                            <td>0</td>
+                            <td>
+                                <button class="btn btn-outline-primary btn-action" onclick="showModal('activityModal')">编辑</button>
+                                <button class="btn btn-outline-secondary btn-action" onclick="showModal('qrModal')">二维码</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
-          <!-- 限购策略新建/编辑 - 单页表单 -->
-          <div v-if="route==='strategy/create'" class="form-card">
-            <div class="form-title">限购策略 {{ editMode ? '编辑' : '新建' }}</div>
+    <!-- 回填单审核页面 -->
+    <div class="main-content page-section" id="page-review">
+        <div class="page-header">
+            <div class="page-title">回填单审核</div>
+            <button class="btn btn-primary">
+                <i class="bi bi-download"></i> 导出
+            </button>
+        </div>
+        
+        <div class="card">
+            <div class="card-body">
+                <div class="filter-bar">
+                    <select class="form-select" style="width: 150px;">
+                        <option value="">全部状态</option>
+                        <option value="0" selected>待审核</option>
+                        <option value="1">已通过</option>
+                        <option value="2">已驳回</option>
+                    </select>
+                    <select class="form-select" style="width: 150px;">
+                        <option value="">全部活动</option>
+                        <option value="1">快闪店预售活动</option>
+                    </select>
+                    <input type="text" placeholder="搜索回填单号/手机号/小票号">
+                    <button class="btn btn-primary">搜索</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">回填单列表</div>
+            <div class="card-body" style="padding: 0;">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>回填单号</th>
+                            <th>活动</th>
+                            <th>用户</th>
+                            <th>商品信息</th>
+                            <th>小票号</th>
+                            <th>状态</th>
+                            <th>提交时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="prototype-module" data-prototype="back_form_admin">
+                            <td>HT202603300001</td>
+                            <td>快闪店预售活动</td>
+                            <td>138****8888</td>
+                            <td>芒果 TV 会员月卡 x2</td>
+                            <td>PJ20260330001</td>
+                            <td><span class="badge badge-pending">待审核</span></td>
+                            <td>2026-03-30 10:30</td>
+                            <td>
+                                <button class="btn btn-primary btn-action" onclick="showModal('detailModal')">审核</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>HT202603300002</td>
+                            <td>快闪店预售活动</td>
+                            <td>139****9999</td>
+                            <td>芒果 TV 会员年卡 x1</td>
+                            <td>PJ20260330002</td>
+                            <td><span class="badge badge-passed">已通过</span></td>
+                            <td>2026-03-30 10:25</td>
+                            <td>
+                                <button class="btn btn-outline-secondary btn-action" onclick="showModal('detailModal')">查看</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>HT202603300003</td>
+                            <td>快闪店预售活动</td>
+                            <td>137****7777</td>
+                            <td>芒果 TV+ 京东 PLUS x1</td>
+                            <td>PJ20260330003</td>
+                            <td><span class="badge badge-rejected">已驳回</span></td>
+                            <td>2026-03-30 10:20</td>
+                            <td>
+                                <button class="btn btn-outline-secondary btn-action" onclick="showModal('detailModal')">查看</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div style="display: flex; justify-content: center; margin-top: 20px;">
+            <nav>
+                <ul class="pagination">
+                    <li class="page-item"><a class="page-link" href="#">上一页</a></li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item"><a class="page-link" href="#">下一页</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    
+    <!-- 订单管理页面 -->
+    <div class="main-content page-section" id="page-order">
+        <div class="page-header">
+            <div class="page-title">订单管理</div>
+            <button class="btn btn-primary">
+                <i class="bi bi-download"></i> 导出订单
+            </button>
+        </div>
+        
+        <div class="card">
+            <div class="card-body">
+                <div class="filter-bar">
+                    <select class="form-select" style="width: 150px;">
+                        <option value="">全部状态</option>
+                        <option value="0">待发货</option>
+                        <option value="1">已发货</option>
+                        <option value="2">已完成</option>
+                        <option value="3">已取消</option>
+                    </select>
+                    <select class="form-select" style="width: 150px;">
+                        <option value="">全部活动</option>
+                        <option value="1">快闪店预售活动</option>
+                    </select>
+                    <input type="text" placeholder="搜索订单号/手机号">
+                    <button class="btn btn-primary">搜索</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">订单列表</div>
+            <div class="card-body" style="padding: 0;">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>订单号</th>
+                            <th>回填单号</th>
+                            <th>活动</th>
+                            <th>用户</th>
+                            <th>商品信息</th>
+                            <th>金额</th>
+                            <th>状态</th>
+                            <th>下单时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="prototype-module" data-prototype="admin_03">
+                            <td>ORD202603300001</td>
+                            <td>HT202603300002</td>
+                            <td>快闪店预售活动</td>
+                            <td>139****9999</td>
+                            <td>芒果 TV 会员年卡 x1</td>
+                            <td>¥199.00</td>
+                            <td><span class="badge badge-passed">已完成</span></td>
+                            <td>2026-03-30 10:25</td>
+                            <td>
+                                <button class="btn btn-outline-primary btn-action" onclick="showModal('orderDetailModal')">详情</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ORD202603300002</td>
+                            <td>HT202603300004</td>
+                            <td>快闪店预售活动</td>
+                            <td>136****6666</td>
+                            <td>芒果 TV 会员季卡 x1</td>
+                            <td>¥59.00</td>
+                            <td><span class="badge badge-pending">待发货</span></td>
+                            <td>2026-03-30 11:00</td>
+                            <td>
+                                <button class="btn btn-outline-primary btn-action" onclick="showModal('orderDetailModal')">详情</button>
+                                <button class="btn btn-outline-success btn-action">发货</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ORD202603300003</td>
+                            <td>HT202603300005</td>
+                            <td>快闪店预售活动</td>
+                            <td>135****5555</td>
+                            <td>芒果 TV+ 京东 PLUS x1</td>
+                            <td>¥168.00</td>
+                            <td><span class="tag tag-blue">已发货</span></td>
+                            <td>2026-03-30 11:15</td>
+                            <td>
+                                <button class="btn btn-outline-primary btn-action" onclick="showModal('orderDetailModal')">详情</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div style="display: flex; justify-content: center; margin-top: 20px;">
+            <nav>
+                <ul class="pagination">
+                    <li class="page-item"><a class="page-link" href="#">上一页</a></li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item"><a class="page-link" href="#">下一页</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    
+    <!-- 商品池管理页面 -->
+    <div class="main-content page-section" id="page-product">
+        <div class="page-header">
+            <div class="page-title">商品池管理</div>
+            <button class="btn btn-primary" onclick="showModal('productPoolModal')">
+                <i class="bi bi-plus-lg"></i> 新建商品池
+            </button>
+        </div>
+        
+        <div class="card">
+            <div class="card-body">
+                <div class="filter-bar">
+                    <input type="text" placeholder="搜索商品池名称">
+                    <button class="btn btn-primary">搜索</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">商品池列表</div>
+            <div class="card-body">
+                <div class="prototype-module" data-prototype="admin_04">
+                    <div class="activity-card">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 style="margin-bottom: 8px;">会员商品池</h6>
+                                <div style="color: #999; font-size: 13px;">
+                                    <span class="status-dot active"></span>启用中
+                                    <span style="margin-left: 16px;">商品数：24</span>
+                                    <span style="margin-left: 16px;">关联活动：2</span>
+                                </div>
+                                <div style="margin-top: 8px;">
+                                    <span class="tag tag-blue">虚拟商品</span>
+                                    <span class="tag tag-green">会员权益</span>
+                                </div>
+                            </div>
+                            <div>
+                                <button class="btn btn-outline-primary btn-action" onclick="showModal('productPoolModal')">编辑</button>
+                                <button class="btn btn-outline-secondary btn-action" onclick="showModal('productListModal')">商品列表</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="activity-card">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 style="margin-bottom: 8px;">电器商品池</h6>
+                                <div style="color: #999; font-size: 13px;">
+                                    <span class="status-dot inactive"></span>已禁用
+                                    <span style="margin-left: 16px;">商品数：156</span>
+                                    <span style="margin-left: 16px;">关联活动：1</span>
+                                </div>
+                                <div style="margin-top: 8px;">
+                                    <span class="tag tag-orange">实物商品</span>
+                                    <span class="tag tag-blue">家电数码</span>
+                                </div>
+                            </div>
+                            <div>
+                                <button class="btn btn-outline-primary btn-action" onclick="showModal('productPoolModal')">编辑</button>
+                                <button class="btn btn-outline-secondary btn-action" onclick="showModal('productListModal')">商品列表</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 审核详情弹窗 -->
+    <div class="modal fade" id="detailModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">回填单详情 - HT202603300001</h5>
+                    <button type="button" class="btn-close" onclick="closeModal('detailModal')"></button>
+                </div>
+                <div class="modal-body" style="padding: 0;">
+                    <div class="detail-section">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="detail-label">活动</div>
+                                <div class="detail-value">快闪店预售活动</div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="detail-label">提交时间</div>
+                                <div class="detail-value">2026-03-30 10:30:25</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-label">用户信息</div>
+                        <div class="detail-value">手机号：138****8888</div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-label">商品信息</div>
+                        <div class="product-info">
+                            <div class="product-thumb">图片</div>
+                            <div>
+                                <div style="font-weight: 500;">芒果 TV 会员月卡</div>
+                                <div style="color: #999; font-size: 13px;">SKU：VIP-001 | 单价：¥19.9</div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 8px;">数量：2 | 小计：¥39.8</div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-label">收货地址</div>
+                        <div class="detail-value">
+                            张三 138****8888<br>
+                            湖南省 长沙市 岳麓区 麓谷大道 100 号创新大厦 10 楼
+                        </div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-label">小票信息</div>
+                        <div class="detail-value">小票号：PJ20260330001</div>
+                        <div style="margin-top: 12px;">
+                            <div class="detail-label">小票照片</div>
+                            <div style="display: flex; gap: 12px; margin-top: 8px;">
+                                <div style="width: 100px; height: 100px; background: #f5f5f5; border-radius: 8px; display: flex; align-items: center; justify-content: center;">照片 1</div>
+                                <div style="width: 100px; height: 100px; background: #f5f5f5; border-radius: 8px; display: flex; align-items: center; justify-content: center;">照片 2</div>
+                                <div style="width: 100px; height: 100px; background: #f5f5f5; border-radius: 8px; display: flex; align-items: center; justify-content: center;">照片 3</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" onclick="reject()">驳回</button>
+                    <button type="button" class="btn btn-success" onclick="pass()">通过</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新增/编辑活动弹窗 -->
+    <div class="modal fade" id="activityModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">新增活动</h5>
+                    <button type="button" class="btn-close" onclick="closeModal('activityModal')"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label class="form-label">活动名称</label>
+                            <input type="text" class="form-control" placeholder="请输入活动名称">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">订单渠道</label>
+                            <select class="form-select">
+                                <option>线下渠道 A</option>
+                                <option>线下渠道 B</option>
+                                <option>线上渠道</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">商品池</label>
+                            <select class="form-select">
+                                <option>会员商品池</option>
+                                <option>电器商品池</option>
+                            </select>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">开始时间</label>
+                                <input type="date" class="form-control">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">结束时间</label>
+                                <input type="date" class="form-control">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">活动状态</label>
+                            <div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="status" checked>
+                                    <label class="form-check-label">启用</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="status">
+                                    <label class="form-check-label">禁用</label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('activityModal')">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="closeModal('activityModal')">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 二维码弹窗 -->
+    <div class="modal fade" id="qrModal" tabindex="-1">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">活动二维码</h5>
+                    <button type="button" class="btn-close" onclick="closeModal('qrModal')"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="qr-code" style="width: 200px; height: 200px; margin: 0 auto 16px;">
+                        <i class="bi bi-qr-code" style="font-size: 120px; color: #333;"></i>
+                    </div>
+                    <p style="color: #999; font-size: 13px;">快闪店预售活动</p>
+                    <button class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-download"></i> 下载二维码
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 订单详情弹窗 -->
+    <div class="modal fade" id="orderDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">订单详情 - ORD202603300001</h5>
+                    <button type="button" class="btn-close" onclick="closeModal('orderDetailModal')"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="detail-section">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="detail-label">订单号</div>
+                                <div class="detail-value">ORD202603300001</div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="detail-label">回填单号</div>
+                                <div class="detail-value">HT202603300002</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-label">订单状态</div>
+                        <div class="detail-value"><span class="badge badge-passed">已完成</span></div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-label">商品信息</div>
+                        <div class="product-card">
+                            <div class="product-img">图片</div>
+                            <div>
+                                <div style="font-weight: 500;">芒果 TV 会员年卡</div>
+                                <div style="color: #999; font-size: 13px;">SKU：VIP-YEAR-001</div>
+                                <div style="margin-top: 4px;">数量：x1 | 单价：¥199.00</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-label">收货信息</div>
+                        <div class="detail-value">
+                            李四 139****9999<br>
+                            湖南省 长沙市 天心区 芙蓉中路 200 号
+                        </div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-label">订单金额</div>
+                        <div class="detail-value" style="font-size: 18px; color: #ff4d4f;">¥199.00</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 商品池弹窗 -->
+    <div class="modal fade" id="productPoolModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">新建商品池</h5>
+                    <button type="button" class="btn-close" onclick="closeModal('productPoolModal')"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label class="form-label">商品池名称</label>
+                            <input type="text" class="form-control" placeholder="请输入商品池名称">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">商品类型</label>
+                            <select class="form-select">
+                                <option>虚拟商品</option>
+                                <option>实物商品</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">商品池状态</label>
+                            <div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="poolStatus" checked>
+                                    <label class="form-check-label">启用</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="poolStatus">
+                                    <label class="form-check-label">禁用</label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('productPoolModal')">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="closeModal('productPoolModal')">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 商品列表弹窗 -->
+    <div class="modal fade" id="productListModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">商品列表 - 会员商品池</h5>
+                    <button type="button" class="btn-close" onclick="closeModal('productListModal')"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="filter-bar">
+                        <input type="text" placeholder="搜索商品名称">
+                        <button class="btn btn-primary">添加商品</button>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>商品名称</th>
+                                <th>SKU</th>
+                                <th>类型</th>
+                                <th>价格</th>
+                                <th>状态</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>芒果 TV 会员月卡</td>
+                                <td>VIP-001</td>
+                                <td><span class="tag tag-blue">虚拟</span></td>
+                                <td>¥19.9</td>
+                                <td><span class="badge badge-passed">上架</span></td>
+                            </tr>
+                            <tr>
+                                <td>芒果 TV 会员季卡</td>
+                                <td>VIP-003</td>
+                                <td><span class="tag tag-blue">虚拟</span></td>
+                                <td>¥59.0</td>
+                                <td><span class="badge badge-passed">上架</span></td>
+                            </tr>
+                            <tr>
+                                <td>芒果 TV 会员年卡</td>
+                                <td>VIP-YEAR-001</td>
+                                <td><span class="tag tag-blue">虚拟</span></td>
+                                <td>¥199.0</td>
+                                <td><span class="badge badge-passed">上架</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 页面切换函数
+        function showPage(pageId) {
+            // 隐藏所有页面
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            // 移除所有菜单激活状态
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
             
-            <!-- 基本信息 -->
-            <div class="form-section">
-              <div class="form-section-title">基本信息</div>
-              <el-form label-width="120px">
-                <el-form-item label="策略类型" required>
-                  <el-radio-group v-model="create.type" @change="onTypeChange">
-                    <el-radio label="SPU">SPU限购</el-radio>
-                    <el-radio label="SKU">SKU限购</el-radio>
-                  </el-radio-group>
-                  <div style="color:#909399; font-size:12px; margin-top:4px;">切换类型后需重新选择商品</div>
-                </el-form-item>
-              </el-form>
-            </div>
-
-            <!-- 商品选择 -->
-            <div class="form-section">
-              <div class="form-section-title">商品选择 <span style="color:red">*</span></div>
-              <el-form label-width="120px">
-                <el-form-item label="输入商品ID">
-                  <el-input v-model="create.productInput" @keyup.enter.native="queryProduct" placeholder="输入商品ID后按回车查询" style="width:300px;"></el-input>
-                  <el-button @click="queryProduct" style="margin-left:8px;">查询</el-button>
-                  <div style="color:#909399; font-size:12px; margin-top:4px;">输入商品ID后实时查询对应的商品名称</div>
-                </el-form-item>
-                <el-form-item label="查询结果" v-if="create.queryResult">
-                  <!-- SPU限购 -->
-                  <div v-if="create.type==='SPU'">
-                    <el-radio-group v-model="create.selectedSpu">
-                      <el-radio :label="create.queryResult.id">
-                        {{ create.queryResult.name }}（SPU）
-                      </el-radio>
-                    </el-radio-group>
-                    <div style="color:#909399; font-size:12px; margin-top:4px;">选择1个SPU</div>
-                  </div>
-                  <!-- SKU限购 -->
-                  <div v-else>
-                    <div style="margin-bottom:8px; color:#909399; font-size:12px;">SKU限购：列出SPU下的全部SKU，提供勾选</div>
-                    <el-table :data="skuList" height="250" @selection-change="onSkuSelect" border style="max-width:600px;">
-                      <el-table-column type="selection" width="50"></el-table-column>
-                      <el-table-column prop="id" label="SKU ID" width="140"></el-table-column>
-                      <el-table-column prop="name" label="SKU名称" min-width="200"></el-table-column>
-                      <el-table-column prop="spuId" label="所属SPU" width="120"></el-table-column>
-                    </el-table>
-                    <div style="color:#909399; font-size:12px; margin-top:4px;">已选择 {{ create.selectedSkus.length }} 个SKU，最多选择100个</div>
-                  </div>
-                </el-form-item>
-                <el-form-item label="已选商品" v-if="create.selectedProducts.length>0">
-                  <el-tag v-for="p in create.selectedProducts" :key="p.id" style="margin:4px;">{{ p.name }}</el-tag>
-                </el-form-item>
-              </el-form>
-            </div>
-
-            <!-- 限购周期与数量 -->
-            <div class="form-section">
-              <div class="form-section-title">限购周期与数量 <span style="color:red">*</span></div>
-              <el-form label-width="120px">
-                <el-form-item label="周期类型">
-                  <el-radio-group v-model="create.periodType">
-                    <el-radio label="permanent">永久</el-radio>
-                    <el-radio label="one_year">一年</el-radio>
-                    <el-radio label="custom">自定义</el-radio>
-                  </el-radio-group>
-                </el-form-item>
-                <el-form-item label="自定义周期" v-if="create.periodType==='custom'">
-                  <el-date-picker v-model="create.startTime" type="datetime" placeholder="开始时间" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
-                  <span style="margin:0 8px;">至</span>
-                  <el-date-picker v-model="create.endTime" type="datetime" placeholder="结束时间" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
-                  <div style="color:#909399; font-size:12px; margin-top:4px;">结束时间必须大于开始时间</div>
-                </el-form-item>
-                <el-form-item label="数量上限">
-                  <el-input-number v-model="create.limitQty" :min="1" :max="9999" label="每用户每周期件数"></el-input-number>
-                  <span style="margin-left:8px;">件/每用户每周期</span>
-                  <div style="color:#909399; font-size:12px; margin-top:4px;">取值范围：1-9999</div>
-                </el-form-item>
-              </el-form>
-            </div>
-
-          <!-- 人群包 -->
-          <div class="form-section">
-            <div class="form-section-title">人群包</div>
-            <el-form label-width="120px">
-              <el-form-item label="选择人群包">
-                <el-select v-model="create.crowdId" placeholder="不选择则对所有用户生效" style="width:300px;" clearable>
-                  <el-option v-for="c in crowdPackages" :key="c.id" :label="c.name" :value="c.id"></el-option>
-                </el-select>
-                <div style="color:#909399; font-size:12px; margin-top:4px;">选填，不选择则对所有用户生效</div>
-              </el-form-item>
-            </el-form>
-          </div>
-
-          <!-- 用户提示 -->
-          <div class="form-section">
-            <div class="form-section-title">用户提示</div>
-            <el-form label-width="120px">
-              <el-form-item label="提示文案">
-                <el-input type="textarea" :rows="2" v-model="create.userTip" placeholder="用于用户因限购策略无法下单时的提示，如：您已达到购买上限"></el-input>
-                <div style="color:#909399; font-size:12px; margin-top:4px;">选填，用于在用户无法下单时展示提示信息</div>
-              </el-form-item>
-            </el-form>
-          </div>
-
-          <!-- 状态 -->
-            <div class="form-section">
-              <div class="form-section-title">状态</div>
-              <el-form label-width="120px">
-                <el-form-item label="启用/停用">
-                  <el-switch v-model="create.enabled" active-text="启用" inactive-text="停用"></el-switch>
-                </el-form-item>
-              </el-form>
-            </div>
-
-            <!-- 并行策略提示 -->
-            <div class="warning-box">
-              <div class="warning-title">⚠️ 并行策略提示</div>
-              <p style="margin:0; color:#e65100;">同商品存在其他策略将<strong>并行生效</strong>，不做覆盖或合并。</p>
-              <p style="margin:8px 0 0; color:#ff7d00;">SPU策略与SKU策略<strong>不合并计数</strong>。</p>
-            </div>
-
-            <!-- 操作按钮 -->
-            <div style="text-align:center; margin-top:24px;">
-              <el-button @click="go('#strategy/list')">取 消</el-button>
-              <el-button type="primary" @click="submitStrategy">保存</el-button>
-            </div>
-          </div>
-
-          <!-- 人群包列表 -->
-          <div v-if="route==='crowd/list'">
-            <div class="table-header">
-              <el-input v-model="filters.crowdName" placeholder="人群包名称/ID" style="width: 240px;"></el-input>
-              <el-button type="primary" @click="applyFilters">查询</el-button>
-              <el-button @click="resetFilters">重置</el-button>
-              <div style="margin-left:auto;">
-                <el-button type="primary" @click="go('#crowd/create')">创建人群包</el-button>
-              </div>
-            </div>
-            <el-table :data="crowdPackages" style="width: 100%" border>
-              <el-table-column prop="id" label="ID" width="120"></el-table-column>
-              <el-table-column prop="name" label="名称" min-width="160"></el-table-column>
-              <el-table-column prop="bindProducts" label="商品名称" min-width="200">
-                <template slot-scope="scope">
-                  <span v-if="scope.row.bindProducts && scope.row.bindProducts.length > 0">
-                    <el-tag v-for="(p, i) in scope.row.bindProducts.slice(0, 3)" :key="i" style="margin-right: 4px;">{{ p }}</el-tag>
-                    <span v-if="scope.row.bindProducts.length > 3" style="color: #909399;">...</span>
-                  </span>
-                  <span v-else>-</span>
-                </template>
-              </el-table-column>
-              <el-table-column prop="joinTags" label="加入条件" min-width="220"></el-table-column>
-              <el-table-column prop="initLabel" label="初始化" width="120"></el-table-column>
-              <el-table-column prop="statusLabel" label="状态" width="100"></el-table-column>
-              <el-table-column prop="updatedBy" label="创建人/更新时间" min-width="220">
-                <template slot-scope="scope">
-                  <div>{{ scope.row.createdBy }} / {{ scope.row.updatedAt }}</div>
-                </template>
-              </el-table-column>
-              <el-table-column label="操作" width="160">
-                <template slot-scope="scope">
-                  <el-link type="primary" @click="previewCrowd(scope.row)">查看</el-link>
-                  <el-link type="primary" @click="editCrowd(scope.row)">编辑</el-link>
-                  <el-switch v-model="scope.row.enabled" active-text="启用" inactive-text="停用"></el-switch>
-                </template>
-              </el-table-column>
-            </el-table>
-          </div>
-
-          <!-- 人群包新建/编辑 - 单页表单 -->
-          <div v-if="route==='crowd/create'" class="form-card">
-            <div class="form-title">人群包 {{ crowdEditMode ? '编辑' : '新建' }}</div>
+            // 显示目标页面
+            const pageEl = document.getElementById('page-' + pageId);
+            if (pageEl) pageEl.classList.add('active');
+            // 激活对应菜单
+            const menuEl = document.getElementById('menu-' + pageId);
+            if (menuEl) menuEl.classList.add('active');
             
-            <!-- 基本信息 -->
-            <div class="form-section">
-              <div class="form-section-title">基本信息</div>
-              <el-form label-width="120px">
-                <el-form-item label="名称" required>
-                  <el-input v-model="crowdCreate.name" placeholder="请输入人群包名称" style="width:300px;"></el-input>
-                </el-form-item>
-              </el-form>
-            </div>
-
-            <!-- 绑定商品 -->
-            <div class="form-section">
-              <div class="form-section-title">绑定商品 <span style="color:red">*</span></div>
-              <el-form label-width="120px">
-                <el-form-item label="绑定类型">
-                  <el-radio-group v-model="crowdCreate.bindType">
-                    <el-radio label="SPU">SPU</el-radio>
-                    <el-radio label="SKU">SKU</el-radio>
-                  </el-radio-group>
-                  <div style="color:#909399; font-size:12px; margin-top:4px;">选择后将仅保留对应类型的ID</div>
-                </el-form-item>
-                <el-form-item label="批量ID">
-                  <el-input type="textarea" :rows="4" v-model="crowdCreate.idText" placeholder="一行一个ID"></el-input>
-                  <div style="color:#909399; font-size:12px; margin-top:8px;">输入{{ crowdCreate.bindType }} ID，一行一个</div>
-                </el-form-item>
-              </el-form>
-            </div>
-
-            <!-- 加入条件 -->
-            <div class="form-section">
-              <div class="form-section-title">加入条件 <span style="color:red">*</span></div>
-              <el-form label-width="120px">
-                <el-form-item label="条件类型">
-                  <el-radio-group v-model="crowdCreate.joinCondition">
-                    <el-radio label="支付完成">支付完成</el-radio>
-                    <el-radio label="签收完成">签收完成</el-radio>
-                    <el-radio label="订单完成">订单完成</el-radio>
-                  </el-radio-group>
-                </el-form-item>
-              </el-form>
-            </div>
-
-            <!-- 初始化配置 -->
-            <div class="form-section">
-              <div class="form-section-title">初始化配置</div>
-              <el-form label-width="120px">
-                <el-form-item label="退款剔除">
-                  <el-switch v-model="crowdCreate.refundExclude"></el-switch>
-                  <div style="color:#909399; font-size:12px; margin-top:4px;">开启后自动剔除退款用户</div>
-                </el-form-item>
-                <el-form-item label="初始化范围">
-                  <span>固定：过去365天历史购买用户</span>
-                </el-form-item>
-                <el-form-item label="执行方式">
-                  <el-radio-group v-model="crowdCreate.initMode">
-                    <el-radio label="立即执行">立即执行</el-radio>
-                    <el-radio label="手动执行">手动执行</el-radio>
-                  </el-radio-group>
-                </el-form-item>
-              </el-form>
-            </div>
-
-            <!-- 状态 -->
-            <div class="form-section">
-              <div class="form-section-title">状态</div>
-              <el-form label-width="120px">
-                <el-form-item label="启用/停用">
-                  <el-switch v-model="crowdCreate.enabled" active-text="启用" inactive-text="停用"></el-switch>
-                </el-form-item>
-              </el-form>
-            </div>
-
-            <!-- 操作按钮 -->
-            <div style="text-align:center; margin-top:24px;">
-              <el-button @click="go('#crowd/list')">取 消</el-button>
-              <el-button type="primary" @click="confirmCrowdCreate">保存</el-button>
-            </div>
-          </div>
-        </el-main>
-      </el-container>
-    </el-container>
-  </div>
-
-  <script src="https://unpkg.com/vue@2.6.14/dist/vue.js"></script>
-  <script src="https://unpkg.com/element-ui/lib/index.js"></script>
-  <script>
-    new Vue({
-      el: '#app',
-      data() {
-        return {
-          route: 'strategy/list',
-          menuActive: '3-2',
-          editMode: false,
-          crowdEditMode: false,
-          focusKey: null,
-          userNickname: 'shanjia001',
-          filters: { strategyName: '', strategyType: '', crowdName: '' },
-          strategies: [
-            { id: 'S0001', name: '限购-SPU-年度1件', type: 'SPU', typeLabel: 'SPU限购', bindCount: 3, periodLabel: '一年', limitQty: 1, crowdName: '包A', statusLabel: '启用', enabled: true, createdBy: 'admin', updatedAt: '2026-03-25 10:00:00' },
-            { id: 'K0007', name: '限购-SKU-促销3件', type: 'SKU', typeLabel: 'SKU限购', bindCount: 5, periodLabel: '自定义', limitQty: 3, crowdName: '包B', statusLabel: '停用', enabled: false, createdBy: 'op01', updatedAt: '2026-03-24 18:22:10' }
-          ],
-          create: {
-            type: '',
-            productInput: '',
-            queryResult: null,
-            selectedSpu: '',
-            selectedSkus: [],
-            selectedProducts: [],
-            periodType: 'permanent',
-            startTime: '',
-            endTime: '',
-            limitQty: 1,
-            crowdId: '',
-            userTip: '',
-            enabled: true
-          },
-          invalidIds: [],
-          productDialog: false,
-          productQuery: '',
-          productList: [
-            { id: '10001', name: '示例商品A', kind: 'SPU' },
-            { id: '10002', name: '示例商品B', kind: 'SPU' },
-            { id: '20001', name: '示例SKU X', kind: 'SKU' },
-            { id: '20002', name: '示例SKU Y', kind: 'SKU' }
-          ],
-          selectedProductsTmp: [],
-          crowdPackages: [
-            { id: 'C001', name: '包A', bindProducts: ['示例商品A', '示例商品B', '示例SKU X'], joinTags: '支付/签收', initLabel: '已执行', statusLabel: '启用', enabled: true, createdBy: 'admin', updatedAt: '2026-03-20 12:00:00' },
-            { id: 'C002', name: '包B', bindProducts: ['示例SKU Y', '示例商品A'], joinTags: '订单完成', initLabel: '未执行', statusLabel: '停用', enabled: false, createdBy: 'op01', updatedAt: '2026-03-18 09:30:00' }
-          ],
-          crowdCreate: {
-            name: '',
-            bindType: 'SPU',
-            idText: '',
-            ids: [],
-            joinCondition: '',
-            refundExclude: false,
-            initMode: '手动执行',
-            enabled: true
-          }
+            // 发送联动消息
+            window.parent.postMessage({
+                action: 'pageChange',
+                pageId: pageId
+            }, '*');
         }
-      },
-      computed: {
-        filteredStrategies() {
-          return this.strategies.filter(s => {
-            const byName = this.filters.strategyName ? (s.name.includes(this.filters.strategyName) || s.id.includes(this.filters.strategyName)) : true;
-            const byType = this.filters.strategyType ? s.type === this.filters.strategyType : true;
-            return byName && byType;
-          });
-        },
-        productListFiltered() {
-          return this.productList.filter(p => {
-            const okType = this.create.type ? (p.kind === this.create.type) : true;
-            const byQuery = this.productQuery ? (p.name.includes(this.productQuery) || p.id.includes(this.productQuery)) : true;
-            return okType && byQuery;
-          });
-        },
-        canProceedPeriod() {
-          if (!this.create.limitQty || this.create.limitQty < 1 || this.create.limitQty > 9999) return false;
-          if (this.create.periodType === 'custom') {
-            if (!this.create.startTime || !this.create.endTime) return false;
-            return new Date(this.create.endTime).getTime() > new Date(this.create.startTime).getTime();
-          }
-          return true;
+        
+        // 显示弹窗
+        function showModal(modalId) {
+            const modal = new bootstrap.Modal(document.getElementById(modalId));
+            modal.show();
         }
-      },
-      watch: {
-        focusKey() {
-          this.$nextTick(this.scrollToFocus);
-        },
-        route() {
-          this.$nextTick(this.scrollToFocus);
+        
+        // 关闭弹窗
+        function closeModal(modalId) {
+            const modalEl = document.getElementById(modalId);
+            const modal = bootstrap.Modal.getInstance(modalEl);
+            if (modal) {
+                modal.hide();
+            }
         }
-      },
-      created() {
-        this.initRoute();
-      },
-      methods: {
-        initRoute() {
-          const hash = window.location.hash.replace('#','');
-          const params = new URLSearchParams(window.location.search);
-          this.focusKey = params.get('focus');
-          if (hash === 'strategy/create') { 
-            this.route = 'strategy/create'; 
-            this.menuActive = '3-2'; 
-            this.editMode = false;
-          }
-          else if (hash === 'crowd/list') { 
-            this.route = 'crowd/list'; 
-            this.menuActive = '3-1'; 
-          }
-          else if (hash === 'crowd/create') { 
-            this.route = 'crowd/create'; 
-            this.menuActive = '3-1'; 
-            this.crowdEditMode = false;
-          }
-          else { 
-            this.route = 'strategy/list'; 
-            this.menuActive = '3-2'; 
-          }
-          this.$nextTick(this.scrollToFocus);
-        },
-        scrollToFocus() {
-          const el = document.querySelector('.active-focus');
-          if (el && typeof el.scrollIntoView === 'function') {
-            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          }
-        },
-        go(h) {
-          window.location.hash = h;
-          this.initRoute();
-        },
-        applyFilters() {},
-        resetFilters() { this.filters = { strategyName: '', strategyType: '', crowdName: '' }; },
-        previewStrategy(row) { this.$alert('查看：' + row.name, '提示'); },
-        editStrategy(row) { this.editMode = true; this.go('#strategy/create'); },
-        toggleStrategy(row) { this.$message.success((row.enabled ? '启用' : '停用') + '成功'); },
-        onTypeChange() {
-          this.create.productInput = '';
-          this.create.queryResult = null;
-          this.create.selectedSpu = '';
-          this.create.selectedSkus = [];
-          this.create.selectedProducts = [];
-          this.$message.warning('已切换策略类型，已清空已选商品');
-        },
-        queryProduct() {
-          const id = this.create.productInput.trim();
-          if (!id) {
-            this.$message.warning('请输入商品ID');
-            return;
-          }
-          const found = this.productList.find(p => p.id === id);
-          if (found) {
-            this.create.queryResult = found;
-            this.$message.success('查询成功：' + found.name);
-          } else {
-            this.create.queryResult = null;
-            this.$message.warning('未找到该商品ID');
-          }
-        },
-        onSkuSelect(rows) {
-          this.create.selectedSkus = rows.map(r => r.id).slice(0, 100);
-          this.create.selectedProducts = rows;
-          if (rows.length > 100) this.$message.warning('SKU策略最多选择100个，已截取前100个');
-        },
-        submitStrategy() {
-          if (!this.create.type) {
-            this.$message.error('请选择策略类型');
-            return;
-          }
-          if (this.create.type === 'SPU' && !this.create.selectedSpu) {
-            this.$message.error('请选择SPU商品');
-            return;
-          }
-          if (this.create.type === 'SKU' && this.create.selectedSkus.length === 0) {
-            this.$message.error('请选择SKU商品');
-            return;
-          }
-          if (!this.canProceedPeriod) {
-            this.$message.error('请完善限购周期与数量');
-            return;
-          }
-          this.$confirm('确认保存该限购策略？', '确认').then(() => {
-            this.$message.success('保存成功');
-            this.go('#strategy/list');
-          }).catch(() => {});
-        },
-        previewCrowd(row) { this.$alert('查看：' + row.name, '提示'); },
-        editCrowd(row) { this.crowdEditMode = true; this.go('#crowd/create'); },
-        openProductDialogCrowd() { this.productDialog = true; this.selectedProductsTmp = []; },
-        confirmCrowdCreate() {
-          if (!this.crowdCreate.name || !this.crowdCreate.idText.trim() || !this.crowdCreate.joinCondition) {
-            this.$message.error('请完成所有必填项');
-            return;
-          }
-          this.$confirm('确认保存该人群包？', '确认').then(() => {
-            this.$message.success('保存成功');
-            this.go('#crowd/list');
-          }).catch(() => {});
+        
+        // 审核通过
+        function pass() {
+            alert('审核通过，已生成正式订单');
+            closeModal('detailModal');
         }
-      }
-    })
-  </script>
+        
+        // 审核驳回
+        function reject() {
+            const reason = prompt('请输入驳回原因：');
+            if (reason) {
+                alert('已驳回，原因：' + reason);
+                closeModal('detailModal');
+            }
+        }
+        
+        // 接收主控文档联动指令
+        window.addEventListener('message', function(e) {
+            if (e.data.action === 'highlight' && e.data.featureId) {
+                // 移除所有高亮
+                document.querySelectorAll('.prototype-module').forEach(module => {
+                    module.classList.remove('feature-highlight');
+                });
+                // 高亮对应模块（支持新旧 featureId 兼容）
+                const aliasMap = {
+                    'activity_admin': 'admin_01',
+                    'back_form_admin': 'admin_02',
+                    'admin_01': 'activity_admin',
+                    'admin_02': 'back_form_admin'
+                };
+                const fid = String(e.data.featureId);
+                const candidates = [fid, aliasMap[fid]].filter(Boolean);
+                const selector = candidates.map(id => `.prototype-module[data-prototype="${id}"]`).join(',');
+                const targetModule = document.querySelector(selector);
+                if (targetModule) {
+                    // 先切换到包含该模块的页面，避免高亮元素在隐藏页中看不到
+                    const pageSection = targetModule.closest('.page-section');
+                    if (pageSection && pageSection.id && pageSection.id.startsWith('page-')) {
+                        showPage(pageSection.id.replace('page-', ''));
+                    }
+
+                    targetModule.classList.add('feature-highlight');
+                    targetModule.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+            
+            // 接收页面切换指令
+            if (e.data.action === 'navigate' && e.data.pageId) {
+                showPage(e.data.pageId);
+            }
+        });
+    </script>
 </body>
 </html>
