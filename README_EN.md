@@ -73,6 +73,15 @@ Following the CodeX Skill specification, organize your project folder structure 
 
 In the AI chat dialog, type `/qq-prd` and send it, then describe your new project idea. The AI will automatically create the standard folder structure and guide you step-by-step to produce professional requirements documents!
 
+```bash
+/qq-prd
+```
+If your IDE does not support SKILL, you need to manually invoke the SKILL. Add the PRF.MD file and SKILL.MD file to the chat window:
+
+```bash
+call skill /qq-prd start with prf.md
+```
+
 ### PRF (Product Requirements Form) Startup
 
 Start efficiently with an initialized product requirements collection template:

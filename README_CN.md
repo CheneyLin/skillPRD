@@ -63,6 +63,15 @@ git clone https://github.com/CheneyLin/skillPRD.git
 
 >在 AI 的对话框中直接输入 /qq-prd 并发送，然后告诉它你的新项目想法。AI 就会自动帮你建好标准的文件夹结构，并开始一步步引导你产出专业的需求文档了！
 
+```bash
+/qq-prd
+```
+如果IDE或工具不支持SKILL，需要手动调用SKILL。引入 PRF.MD 文件和 SKILL.MD，加入聊天窗口：
+
+```bash
+调用 skill /qq-prd 重新开始工作流
+```
+
 ## PRF（产品需求收集表格）启动
 
 提供一个初始化的产品需求收集表格让工作流高效开始：
