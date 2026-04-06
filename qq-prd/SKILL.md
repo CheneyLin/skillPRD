@@ -13,6 +13,8 @@ description: "通过对话式需求收集、PRD 骨架起草、HTML 原型生成
 
 **🎨 模板强制使用指令：在生成任何文档时，必须严格使用 `/assets` 目录下对应的模板文件样式和结构，确保输出格式统一、专业。**
 
+**🧑‍🎨 样式强制使用指令：在生成html格式文档时，必须严格使用 `/assets/vercel/DESIGN.md` 样式定义文件，确保输出格式统一。**
+
 ---
 
 ## 步骤一：对话式需求采集与确认
@@ -78,11 +80,11 @@ description: "通过对话式需求收集、PRD 骨架起草、HTML 原型生成
 
 - `v1.0/prd_html/` ：存放**HTML格式PRD文档**（与**Markdown格式 PRD 源文档**同步），命名规范：`prd_v1.0.html`。
 
-- `v1.0/prototype_html/`：存放所有高保真  **HTML格式 原型文件**，按产品形态分文件管理，命名规范：`admin_v1.0.html`（后台）、`h5_v1.0.html`（移动端）。
+- `v1.0/prototype_html/`：存放所有高保真  **HTML格式 原型文件**，按产品形态分文件管理，命名规范：`admin_v1.0.html`（后台）、`h5_v1.0.html`（移动端）、`app_v1.0.html`（app端）。
 
 - `v1.0/assets/`：存放Mermaid流程图、导出图片、附件（Excel/CSV数据字典、需求原始文稿、参考资料等）。
 
-- `resource/`：存放工作流模板及产品项目参考文件（如`index_template.html`、`prd_template.md`），供后续迭代复用（适配2.0版本及后续迭代）。
+- `resource/`：存放工作流模板及产品项目参考文件（如`index_template.html`、`prd_template.md`），供后续迭代复用。
 
 - `history/` ：存放项目修改历史日志，方便多Agent协同回溯，命名规范：大模型英文名称 + 时间 + 版本 + 摘要（例：`kimi_2026_03_27_09_04_v1.0_update_form.md`）。
 
@@ -124,11 +126,11 @@ description: "通过对话式需求收集、PRD 骨架起草、HTML 原型生成
 
 ### 4.1 原型规范
 
-1. **严格使用模板**：**必须参考 `/assets/admin_prototype_template.html`（后台端）和 `/assets/app_prototype_template.html`（移动端）标准模板结构**，确保样式统一、专业。
+1. **严格使用模板**：**必须参考 `/assets/admin_prototype_template.html`（后台端）和 `/assets/app_prototype_template.html`（移动端/App端）标准模板结构**，**默认参考 `/assets/vercel/DESIGN.md` 设计规范**，确保样式统一、专业。
 
-2. **手机端产品（App/Mobile Web）**：如无模板，可使用**Tailwind CSS**，采用现代、简洁的设计风格，适配移动端交互习惯。通过固定尺寸手机模拟外框（包含状态栏、底部导航等视觉元素）展示分页面，支持全局展示切换/指定页面展示，增强真实感。**严禁**输出仅移动端单页交互版本原型，避免用户 confusion。
+2. **手机端产品（App/Mobile Web）**：采用现代、简洁的设计风格，适配移动端交互习惯。通过固定尺寸手机模拟外框（包含状态栏、底部导航等视觉元素）展示分页面，支持全局展示切换/指定页面展示，增强真实感。**严禁**输出仅移动端单页交互版本原型，避免用户 confusion。
 
-3. **PC 端产品（后台管理/PC Web）**：如无模板，可使用**Bootstrap 5**，采用**Material Design**风格；支持用户指定 UI 库（如 Element UI、Ant Design、MUI、Arco Design 等），贴合项目实际需求。
+3. **PC 端产品（后台管理/PC Web）**：采用**简洁**风格；支持用户指定 UI 库（如 Element UI、Ant Design、MUI、Arco Design 等），贴合项目实际需求。
 
 4. 必须包含核心交互状态（如默认页、弹窗展开、操作成功/失败提示、空状态等）；可通过原生 JavaScript 或 URL Hash（`#page1`）实现页面切换，模拟真实操作流程。
 
