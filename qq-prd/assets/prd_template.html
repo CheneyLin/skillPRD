@@ -2,278 +2,79 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <title>商品限购策略 PRD v1.3</title>
+  <title>快闪店预售商品回填单 PRD v1.2</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
   <style>
-    :root {
-      --geist-black: #171717;
-      --geist-white: #ffffff;
-      --geist-gray-900: #171717;
-      --geist-gray-600: #4d4d4d;
-      --geist-gray-500: #666666;
-      --geist-gray-400: #808080;
-      --geist-gray-100: #ebebeb;
-      --geist-gray-50: #fafafa;
-      --link-blue: #0072f5;
-      --focus-blue: hsla(212, 100%, 48%, 1);
-      --border-shadow: rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
-      --card-shadow: rgba(0,0,0,0.08) 0px 0px 0px 1px, rgba(0,0,0,0.04) 0px 2px 2px, rgba(0,0,0,0.04) 0px 8px 8px -8px, #fafafa 0px 0px 0px 1px;
-      --primary: #171717;
-    }
-    
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
-    body { 
-      margin: 0; 
-      font-family: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-      color: var(--geist-gray-900); 
-      background: var(--geist-white); 
-      line-height: 1.6;
-      letter-spacing: normal;
-    }
-    
-    .page { 
-      max-width: 1200px; 
-      margin: 0 auto; 
-      padding: 80px 40px; 
-    }
-    
-    h1 { 
-      font-size: 48px; 
-      font-weight: 600; 
-      margin: 0 0 16px; 
-      line-height: 1.00;
-      letter-spacing: -2.4px;
-      color: var(--geist-gray-900);
-    }
-    
-    h2 { 
-      font-size: 32px; 
-      font-weight: 600; 
-      /* margin: 80px 0 24px;  */
-      line-height: 1.25;
-      letter-spacing: -1.28px;
-      color: var(--geist-gray-900);
-      padding-left: 0;
-      border-left: none;
-    }
-    
-    h3 { 
-      font-size: 24px; 
-      font-weight: 600; 
-      margin: 40px 0 16px; 
-      line-height: 1.33;
-      letter-spacing: -0.96px;
-      color: var(--geist-gray-900);
-    }
-    
-    p { 
-      margin: 12px 0; 
-      color: var(--geist-gray-600);
-      font-size: 16px;
-      line-height: 1.50;
-    }
-    
-    .card { 
-      border-radius: 8px; 
-      padding: 32px; 
-      margin: 24px 0; 
-      background: var(--geist-white);
-      box-shadow: var(--card-shadow);
-    }
-    
-    table { 
-      width: 100%; 
-      border-collapse: collapse; 
-      margin: 16px 0; 
-    }
-    
-    th, td { 
-      border-bottom: 1px solid var(--geist-gray-100);
-      padding: 12px 16px; 
-      text-align: left; 
-      vertical-align: top;
-      font-size: 14px;
-    }
-    
-    th { 
-      background: transparent;
-      font-weight: 600;
-      color: var(--geist-gray-900);
-      letter-spacing: -0.32px;
-    }
-    
-    td {
-      color: var(--geist-gray-600);
-    }
-    
-    .list { 
-      margin: 12px 0; 
-      padding-left: 24px; 
-      color: var(--geist-gray-600);
-      font-size: 16px;
-      line-height: 1.75;
-    }
-    
-    .list li {
-      margin: 8px 0;
-    }
-    
-    .btn { 
-      display: inline-block; 
-      padding: 8px 16px; 
-      border: none;
-      color: var(--geist-white); 
-      background: var(--geist-black);
-      border-radius: 6px; 
-      font-size: 14px; 
-      font-weight: 500;
-      cursor: pointer;
-      text-decoration: none;
-      transition: opacity 0.2s;
-    }
-    
-    .btn:hover { 
-      opacity: 0.9;
-    }
-    
-    .btn-secondary {
-      background: var(--geist-white);
-      color: var(--geist-gray-900);
-      box-shadow: rgb(235, 235, 235) 0px 0px 0px 1px;
-    }
-    
-    .meta { 
-      color: var(--geist-gray-500); 
-      font-size: 14px;
-      margin-top: 8px;
-    }
-    
-    .field-group { 
-      background: var(--geist-gray-50); 
-      border-radius: 8px; 
-      padding: 24px; 
-      margin: 20px 0; 
-      box-shadow: var(--border-shadow);
-    }
-    
-    .field-label { 
-      font-weight: 600; 
-      margin-bottom: 12px; 
-      color: var(--geist-gray-900);
-      font-size: 16px;
-      letter-spacing: -0.32px;
-    }
-    
-    .field-hint { 
-      color: var(--geist-gray-500); 
-      font-size: 13px; 
-      margin-top: 6px;
-    }
-    
-    .feature-id { 
-      display: inline-block; 
-      background: var(--link-blue); 
-      color: var(--geist-white); 
-      padding: 4px 10px; 
-      border-radius: 9999px; 
-      font-size: 12px;
-      font-weight: 500;
-      margin-left: 12px;
-    }
-    
-    .feature-module { 
-      border-radius: 8px; 
-      padding: 24px; 
-      margin: 20px 0;
-      box-shadow: var(--border-shadow);
-      transition: box-shadow 0.2s;
-    }
-    
-    .feature-module:hover { 
-      box-shadow: var(--card-shadow);
-    }
-    
-    .mermaid { 
-      background: var(--geist-white); 
-      text-align: center; 
-      margin: 24px 0; 
-      padding: 24px;
-      border-radius: 8px;
-      box-shadow: var(--border-shadow);
-    }
-    
-    .highlight-btn { 
-      background: var(--link-blue); 
-      color: var(--geist-white); 
-      border: none; 
-      padding: 6px 12px; 
-      border-radius: 6px; 
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer; 
-      margin-left: 16px;
-      transition: opacity 0.2s;
-    }
-    
-    .highlight-btn:hover {
-      opacity: 0.9;
-    }
-    
-    a {
-      color: var(--link-blue);
-      text-decoration: underline;
-    }
-    
-    a:hover {
-      opacity: 0.8;
-    }
+    :root { --bg:#fff; --fg:#1f2329; --muted:#606266; --border:#e4e7ed; --primary:#667eea; }
+    body { margin:0; font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; color:var(--fg); background:var(--bg); line-height:1.6; }
+    .page { max-width:1000px; margin:0 auto; padding:24px; }
+    h1 { font-size:28px; margin:0 0 12px; border-bottom:3px solid var(--primary); padding-bottom:12px; }
+    h2 { font-size:20px; margin:32px 0 12px; padding-left:12px; border-left:4px solid var(--primary); }
+    h3 { font-size:16px; margin:20px 0 10px; font-weight:600; }
+    p { margin:8px 0; color:var(--muted); }
+    .card { border:1px solid var(--border); border-radius:8px; padding:20px; margin:16px 0; background:#fff; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
+    table { width:100%; border-collapse:collapse; margin:12px 0; }
+    th, td { border:1px solid var(--border); padding:10px 12px; text-align:left; vertical-align:top; }
+    th { background:#f9fafb; font-weight:600; }
+    .list { margin:0; padding-left:18px; }
+    .btn { display:inline-block; padding:6px 12px; border:1px solid var(--primary); color:#fff; background:var(--primary); border-radius:4px; text-decoration:none; font-size:13px; cursor:pointer; }
+    .btn:hover { opacity:0.9; }
+    .meta { color:#909399; font-size:13px; }
+    .field-group { background:#fafafa; border-radius:6px; padding:16px; margin:16px 0; }
+    .field-label { font-weight:600; margin-bottom:10px; color:var(--fg); }
+    .field-hint { color:var(--muted); font-size:12px; margin-top:4px; }
+    .feature-id { display:inline-block; background:var(--primary); color:#fff; padding:2px 8px; border-radius:4px; font-size:11px; margin-left:8px; }
+    .feature-module { border:1px dashed var(--border); border-radius:8px; padding:16px; margin:16px 0; }
+    .feature-module:hover { border-color:var(--primary); }
+    .mermaid { background:#fff; text-align:center; margin:16px 0; }
+    .highlight-btn { background:var(--primary); color:#fff; border:none; padding:4px 10px; border-radius:4px; font-size:12px; cursor:pointer; margin-left:12px; }
   </style>
 </head>
 <body>
   <div class="page">
-    <h1>商品限购策略 PRD v1.3</h1>
-    <p class="meta">版本：v1.3 | 状态：已确认 | 负责人：林长宇 | 创建时间：2026-03-27</p>
+    <h1>快闪店预售商品回填单 <span style="font-size:16px;color:#666;">产品需求文档</span></h1>
+    <p class="meta">版本：v1.2｜状态：已发布｜创建时间：2026-04-06｜产品经理：林长宇</p>
 
     <div class="card">
       <h2>1. 项目信息与版本记录</h2>
-      <p><strong>产品名称：</strong>商家后台商品限购策略</p>
-      <p><strong>版本：</strong>v1.3</p>
-      <p><strong>负责人：</strong>林长宇</p>
-      <p><strong>创建时间：</strong>2026-03-27</p>
-
       <table>
-        <thead><tr><th>版本</th><th>日期</th><th>变更项</th><th>负责人</th></tr></thead>
-        <tbody>
-          <tr><td>v1.0</td><td>2026-03-27</td><td>初版需求确认与策略模型定义</td><td>林长宇</td></tr>
-          <tr><td>v1.1</td><td>2026-04-01</td><td>模板样式统一与 Bootstrap 5 重构，UI/UX全面优化</td><td>林长宇</td></tr>
-          <tr><td>v1.2</td><td>2026-04-01</td><td>补充评审修改意见与需求细化</td><td>林长宇</td></tr>
-          <tr><td>v1.3</td><td>2026-04-06</td><td>应用 Vercel 模板样式</td><td>林长宇</td></tr>
-        </tbody>
+        <tr><th style="width:120px;">产品名称</th><td>快闪店预售商品回填单</td></tr>
+        <tr><th>版本</th><td>v1.2</td></tr>
+        <tr><th>负责人</th><td>林长宇</td></tr>
+        <tr><th>创建时间</th><td>2026-03-30</td></tr>
+        <tr><th>产品范围</th><td>快闪店H5回填单 + 运营后台 + App订单列表</td></tr>
+        <tr><th>受众角色</th><td>线下消费者、运营人员</td></tr>
+      </table>
+      
+      <h3 style="margin-top:20px;">版本迭代记录</h3>
+      <table>
+        <tr><th>版本</th><th>日期</th><th>变更项</th><th>负责人</th></tr>
+        <tr><td>v1.0</td><td>2026-03-30</td><td>初版需求确认，H5 回填单 + 运营后台功能定义</td><td>产品经理</td></tr>
+        <tr><td>v1.1</td><td>2026-03-30</td><td>增加用户注册登录逻辑，优化产品细节</td><td>林长宇</td></tr>
+        <tr><td>v1.2</td><td>2026-04-06</td><td>新增 App 端快闪店订单列表展示页</td><td>林长宇</td></tr>
       </table>
     </div>
 
     <div class="card">
       <h2>2. 需求背景与目标</h2>
-      <h3>2.1 背景与痛点</h3>
-      <p>商家活动期出现以下问题：</p>
+      <h3>2.1 现状问题与痛点</h3>
+      <p>解决线下快闪店销售预售商品时，收集用户收货地址的完整可靠解决方案，方便后续发货。</p>
+      
+      <h3 style="margin-top:16px;">2.2 需求提出的必要性</h3>
       <ul class="list">
-        <li>限量商品（独特门票礼包/SPU）会被超级用户多次抢购导致普通用户无法购买；</li>
-        <li>现有系统未提供可配置的人群包限购策略，无法做到个性化限购；</li>
-        <li>规则管理零散（促销/商品模块无法覆盖限购冲突与精细化控制），导致支持成本高。</li>
+        <li>之前通过第三方合作方提供类似数据，导入分销系统</li>
+        <li>之后要使用自研线下收银系统，需要自行研发</li>
+        <li>现有流程无法满足快速收集用户信息并生成正式订单的需求</li>
       </ul>
-
-      <h3>2.2 业务目标</h3>
-      <table style="margin-top:16px;">
+      
+      <h3 style="margin-top:16px;">2.3 业务目标</h3>
+      <table>
         <tr><th>目标类型</th><th>描述</th><th>衡量指标</th><th>目标值</th></tr>
-        <tr><td>业务稳定</td><td>限购规则零误判</td><td>限购相关拦截错误≤0</td><td>0</td></tr>
-        <tr><td>体验风险</td><td>用户下单失败提示明确</td><td>相关提示正确率≥99%</td><td>99%</td></tr>
-        <tr><td>活动控制</td><td>避免超卖/抛单</td><td>有效库存一致性≥99.9%</td><td>99.9%</td></tr>
+        <tr><td>业务稳定</td><td>用户完成回填单填写，运营审核后生成正式订单</td><td>回填单提交成功率</td><td>≥95%</td></tr>
+        <tr><td>体验风险</td><td>简化用户填写流程，快速完成信息收集</td><td>平均填写时长</td><td>≤3分钟</td></tr>
+        <tr><td>运营效率</td><td>运营快速审核，减少人工干预</td><td>审核平均时长</td><td>≤5分钟/单</td></tr>
+        <tr><td>数据准确性</td><td>确保收货地址和小票信息准确</td><td>订单地址错误率</td><td>≤1%</td></tr>
       </table>
     </div>
 
@@ -281,179 +82,217 @@
       <h2>3. 用户与使用场景</h2>
       <h3>3.1 核心用户</h3>
       <ul class="list">
-        <li><strong>商家运营后台人员（策略配置者）</strong>：负责创建和配置限购策略</li>
-        <li><strong>商品管理后台管理员</strong>：负责管理和维护策略</li>
+        <li><strong>线下消费者</strong>：在快闪店购买预售商品的用户，付款后扫码填写回填单</li>
+        <li><strong>运营人员</strong>：负责线下场次配置和订单审核</li>
       </ul>
-
-      <h3>3.2 典型场景</h3>
-      <ol class="list" style="padding-left:24px;">
-        <li>运营在商品管理中创建"人群包策略"和"限购策略"</li>
-        <li>指定单个 SPU 或 SKU（可多选）进行限购</li>
-        <li>选择单一人群包（会员等级/标签等），配置限购数量及有效期（到秒）</li>
-        <li>客户端下单阶段，系统校验当前策略；若规则不满足则拒单并返回策略配置提示</li>
-      </ol>
-
-      <h3>3.3 核心用户旅程</h3>
+      
+      <h3 style="margin-top:16px;">3.2 典型场景</h3>
+      <ul class="list">
+        <li>用户在快闪店购买预售商品，付款后扫码进入回填单页面</li>
+        <li>用户填写商品信息、收货地址、小票信息并提交</li>
+        <li>运营人员在后台查看回填单列表，进行审核</li>
+        <li>审核通过后生成正式订单，用户在 App 中查看订单状态</li>
+      </ul>
+      
+      <h3 style="margin-top:16px;">3.3 核心用户旅程</h3>
       <table>
-        <tr><th>阶段</th><th>用户触点</th><th>用户行为</th><th>痛点/情绪</th><th>产品机会点</th></tr>
-        <tr><td>策略配置</td><td>商品管理 - 限购策略</td><td>复制、配置商品、选择人群包</td><td>期望易用，避免错配</td><td>提供模板、智能校验</td></tr>
-        <tr><td>策略生效</td><td>下单校验</td><td>触达限购提示、被拒单</td><td>"不清楚为什么失败"</td><td>提供策略命中详情</td></tr>
-        <tr><td>持续优化</td><td>策略管理</td><td>查看历史、调整策略</td><td>冲突策略难判定</td><td>冲突分析/最小值执行展示</td></tr>
+        <tr><th>阶段</th><th>用户触点</th><th>用户行为</th><th>痛点/情绪</th><th>产品机会</th></tr>
+        <tr><td>到达</td><td>扫码入口</td><td>扫描线下场次二维码进入回填单页面</td><td>不确定要填什么</td><td>清晰展示填写指引</td></tr>
+        <tr><td>选择商品</td><td>商品列表</td><td>浏览并选择预售商品，设定数量</td><td>商品信息不清晰</td><td>展示商品图、名称、规格、价格</td></tr>
+        <tr><td>填写地址</td><td>地址选择</td><td>从地址本选择收货地址或新建地址</td><td>地址输入繁琐</td><td>复用已有地址本功能</td></tr>
+        <tr><td>小票信息</td><td>小票录入</td><td>输入小票号码，上传小票照片</td><td>照片上传麻烦</td><td>支持多张照片上传</td></tr>
+        <tr><td>提交</td><td>提交按钮</td><td>确认信息并提交</td><td>担心提交失败</td><td>明确成功反馈</td></tr>
+        <tr><td>审核</td><td>后台审核</td><td>运营审核回填单，生成订单</td><td>等待时间长</td><td>快速审核机制</td></tr>
+        <tr><td>查看订单</td><td>App 订单列表</td><td>用户在 App 查看快闪店订单</td><td>找不到订单入口</td><td>独立订单列表入口</td></tr>
       </table>
     </div>
 
     <div class="card">
       <h2>4. 需求功能清单</h2>
-      
-      <h3>4.1 商家后台模块 1：人群包策略管理</h3>
-      <ul class="list">
-        <li>人群包加入条件：支付完成、签收完成、订单完成任选；动态人群</li>
-        <li>指定商品：支持指定 SPU/SKU，支持多个，一行一个输入</li>
-        <li>初始化：过去 365 天历史购买用户；退款剔除由其他系统实现，本产品提供开关</li>
-      </ul>
-
-      <h3>4.2 商家后台模块 2：限购策略管理</h3>
-      <ul class="list">
-        <li>单策略仅支持单一人群包（多策略可覆盖不同人群）</li>
-        <li>仅支持指定 SPU/SKU（多选）</li>
-        <li>冲突规则：若多条策略同时命中，取最小限购值；任意一个策略不满足即拒单（严格执行）</li>
-        <li>有效期选项：1 年/永久/自定义（到秒）</li>
-        <li>下单环节校验，提示来自策略配置字段</li>
-      </ul>
-
-      <h3>4.3 APP 商品详情页面</h3>
-      <ul class="list">
-        <li>校验点：下单环节（最接近交易核心）</li>
-        <li>若限购策略命中，校验条件：当前用户与商品是否满足策略的 SPU/SKU 与人群包；购买数量≤策略限购；在生效期内</li>
-        <li>失败处理：返回"策略提示文案"，阻断流程；并记录拦截日志（含策略 ID、人群包、商品、时间）</li>
-      </ul>
+      <h3>4.1 H5 回填单端</h3>
+      <table>
+        <tr><th>功能模块</th><th>功能点</th><th>优先级</th><th>功能标识</th></tr>
+        <tr><td>回填单填写</td><td>填写回填单（商品选择、收货地址、小票信息）</td><td>P0</td><td>h5_back_form_edit</td></tr>
+        <tr><td>回填单成功弹层</td><td>提交成功，展示完整回填单信息，请提供保存到相册功能</td><td>P0</td><td>h5_back_form_success</td></tr>
+      </table>
+      <h3 style="margin-top:20px;">4.2 运营后台端</h3>
+      <table>
+        <tr><th>功能模块</th><th>功能点</th><th>优先级</th><th>功能标识</th></tr>
+        <tr><td>快闪店-线下场次管理</td><td>线下场次新增、编辑、配置</td><td>P0</td><td>admin_activity_admin</td></tr>
+        <tr><td>快闪店-回填单管理</td><td>回填单列表、审核</td><td>P0</td><td>admin_back_form_admin</td></tr>
+      </table>
+      <h3 style="margin-top:20px;">4.3 App 端（新增）</h3>
+      <table>
+        <tr><th>功能模块</th><th>功能点</th><th>优先级</th><th>功能标识</th></tr>
+        <tr><td>快闪店订单列表</td><td>展示快闪店订单列表，包含商品列表和物流信息</td><td>P0</td><td>app_order_list</td></tr>
+      </table>
     </div>
 
     <div class="card">
       <h2>5. 详细方案</h2>
       
-      <!-- 人群包策略模块 -->
-      <h3>5.1 商家后台模块 1：人群包策略管理</h3>
+      <!-- H5 回填单模块 -->
+      <h3>5.1 H5回填单端</h3>
       
-      <div class="feature-module" id="admin_crowd-pack-module">
-        <p style="margin-bottom: 16px;">
-          <strong>模块名称：</strong>人群包策略
-          <button class="highlight-btn" onclick="highlightFeature('admin_crowd-pack-module')">查看原型</button>
-        </p>
-        
+      <div class="feature-module" id="h5_back_form_edit">
+        <h3>5.1.1 回填单填写 <button class="highlight-btn" onclick="highlightFeature('h5_back_form_edit')">查看原型</button></h3>
+        <p class="meta"><strong>功能描述</strong>：用户进入回填单填写界面后，完成商品选择、收货地址、小票信息的填写，并提交回填单。</p>
         <div class="field-group">
-          <div class="field-label">列表展示字段</div>
+          <div class="field-label">详细逻辑</div>
           <ul class="list">
-            <li>策略 ID</li>
-            <li>人群包</li>
-            <li>商品范围（SPU/SKU）</li>
-            <li>加入条件</li>
-            <li>上线状态</li>
+            <li>用户扫码进入回填单填写页面，支持 APP 扫码、微信扫码，未登录时，需先登录</li>
+            <li>页面加载后，基于线下场次 ID 拉取可售预售商品池</li>
+            <li>商品以一行两个卡片展示，卡片包含：商品图、名称、SKU 规格、价格、数量选择器</li>
+            <li>数量选择器采用 - / + 方式，默认数量为 0，至少选择 1 件商品才可提交</li>
+            <li>收货地址支持从地址本选择和新建地址</li>
+            <li>小票号码、小票照片均为必填</li>
+            <li>表单一次性展示：商品选择 → 收货地址 → 小票信息，支持页面内上下滚动</li>
+            <li>点击提交后执行校验，校验通过后调用提交接口</li>
           </ul>
         </div>
-
-        <div class="field-group">
-          <div class="field-label">顶部操作按钮</div>
+        <div class="field-group" style="margin-top:12px;">
+          <div class="field-label">交互设计</div>
           <ul class="list">
-            <li>新建人群包策略</li>
+            <li>商品卡片圆角展示，选中后显示数量状态</li>
+            <li>价格信息高亮，数量操作区可点击面积偏大</li>
+            <li>提交按钮固定底部，提交中展示 loading 状态</li>
+            <li>校验失败时给出明确提示，并引导回到对应输入区</li>
           </ul>
         </div>
-
-        <div class="field-group">
-          <div class="field-label">列表操作按钮</div>
-          <ul class="list">
-            <li><strong>编辑</strong>：编辑当前策略配置</li>
-            <li><strong>回溯</strong>：回溯 365 天内符合条件的用户</li>
-            <li><strong>上线/下线</strong>：快速上线/下线当前策略</li>
-            <li><strong>复制</strong>：复制当前策略</li>
-          </ul>
-        </div>
-
-        <div class="field-group">
-          <div class="field-label">新增/编辑页面字段</div>
-          <ul class="list">
-            <li><strong>人群包名称</strong>：为必填项</li>
-            <li><strong>绑定商品</strong>：指定 SPU/指定 SKU，默认选中指定 SPU，为必填项</li>
-            <li><strong>批量 ID</strong>：多个 SPU ID/多个 SKU ID</li>
-            <li><strong>加入条件</strong>：支付完成、签收完成、订单完成单选</li>
-            <li><strong>状态</strong>：启用/禁用</li>
-          </ul>
+        <div class="field-group" style="margin-top:12px;">
+          <div class="field-label">数据流向</div>
+          <pre style="background:#f5f5f5;padding:12px;border-radius:6px;font-size:12px;overflow-x:auto;">
+前端加载页面 → 获取商品池数据 → 用户填写表单
+→ 前端校验 → API提交回填单 → 返回提交结果</pre>
         </div>
       </div>
 
-      <h3 style="margin-top:24px;">5.2 商家后台模块 2：限购策略管理</h3>
-      
-      <div class="feature-module" id="admin_limit-strategy-module">
-        <p style="margin-bottom: 16px;">
-          <strong>模块名称：</strong>限购策略
-          <button class="highlight-btn" onclick="highlightFeature('admin_limit-strategy-module')">查看原型</button>
-        </p>
-        
+      <div class="feature-module" id="h5_back_form_success">
+        <h3>5.1.2 回填单成功弹层 <button class="highlight-btn" onclick="highlightFeature('h5_back_form_success')">查看原型</button></h3>
+        <p class="meta"><strong>功能描述</strong>：回填单提交成功后，展示成功态弹层，反馈完整回填单信息，并提供保存到相册能力。</p>
         <div class="field-group">
-          <div class="field-label">列表展示字段</div>
+          <div class="field-label">详细逻辑</div>
           <ul class="list">
-            <li>策略 ID</li>
-            <li>名称</li>
-            <li>商品范围（SPU/SKU）</li>
-            <li>限购数量</li>
-            <li>有效期（自定义显示起止时间）</li>
-            <li>状态</li>
+            <li>提交成功后展示成功弹层</li>
+            <li>弹层展示完整信息：回填单编号、商品列表、收货地址、小票号码</li>
+            <li>支持"保存到相册"操作，便于用户留存凭证</li>
           </ul>
         </div>
-
-        <div class="field-group">
-          <div class="field-label">顶部操作按钮</div>
+        <div class="field-group" style="margin-top:12px;">
+          <div class="field-label">交互设计</div>
           <ul class="list">
-            <li>新建限购策略</li>
+            <li>成功态图标与标题突出，强化反馈确认感</li>
+            <li>信息区分组展示，避免内容堆叠</li>
+            <li>"保存到相册"按钮主操作样式明确，点击反馈清晰</li>
           </ul>
         </div>
-
-        <div class="field-group">
-          <div class="field-label">列表操作按钮</div>
-          <ul class="list">
-            <li><strong>编辑</strong>：编辑当前策略配置</li>
-            <li><strong>上线/下线</strong>：快速上线/下线当前策略</li>
-            <li><strong>复制</strong>：复制当前策略</li>
-          </ul>
-        </div>
-
-        <div class="field-group">
-          <div class="field-label">新增/编辑页面字段</div>
-          <ul class="list">
-            <li><strong>选择类别</strong>：SPU 限购/SKU 限购</li>
-            <li><strong>指定商品 ID</strong>：单个商品 ID</li>
-            <li><strong>SKU 列表勾选</strong>：如果类别为 SKU 限购，展示 SKU 列表勾选界面，支持多个 SKU ID</li>
-            <li><strong>限购数量</strong>：正整数</li>
-            <li><strong>有效期</strong>：1 年/永久/自定义（到秒）</li>
-            <li><strong>冲突策略</strong>：自动说明"与当前策略同时命中时将取最小值"</li>
-            <li><strong>提示文案</strong>：可设置单条自定义文案</li>
-            <li><strong>选择人群包</strong>：精确单选，默认不指定</li>
-          </ul>
+        <div class="field-group" style="margin-top:12px;">
+          <div class="field-label">数据流向</div>
+          <pre style="background:#f5f5f5;padding:12px;border-radius:6px;font-size:12px;overflow-x:auto;">
+用户提交回填单 → API返回成功 → 展示成功弹层
+→ 用户保存到相册/继续后续操作</pre>
         </div>
       </div>
 
-      <h3 style="margin-top:24px;">5.3 APP 商品详情页面</h3>
+      <!-- 运营后台模块 -->
+      <h3 style="margin-top:32px;">5.2 运营后台端</h3>
       
-      <div class="feature-module" id="app_limit-checkout-fail">
-        <p style="margin-bottom: 16px;">
-          <strong>功能说明：</strong>下单校验与限购提示
-          <button class="highlight-btn" onclick="highlightFeature('app_limit-checkout-fail')">查看原型</button>
-        </p>
-        
+      <div class="feature-module" id="admin_activity_admin">
+        <h3>5.2.1 快闪店 - 线下场次管理 <button class="highlight-btn" onclick="highlightFeature('admin_activity_admin')">查看原型</button></h3>
+        <p class="meta"><strong>功能描述</strong>：运营在后台完成线下场次的新增、编辑与配置，生成可用于用户填写回填单的入口。</p>
         <div class="field-group">
-          <div class="field-label">下单流程</div>
-          <ol class="list" style="padding-left:24px;">
-            <li>校验购买数量是否超限；若超限则返回自定义的错误提示</li>
-            <li>过滤策略：商品命中策略集、人群包匹配、生效期内</li>
-            <li>策略冲突：必须符合全部有效策略</li>
-            <li>策略示例：
-              <ul>
-                <li>唯一有效无指定人群包策略，购买数量超限即拒绝</li>
-                <li>多条有效无指定人群包策略，取最小限购值（任一条数量策略超限即拒绝）</li>
-                <li>多条有效有指定人群包策略，取最小限购值、最小人群包匹配（任一条数量策略超限、任一个人群包匹配策略不匹配即拒绝）</li>
-              </ul>
-            </li>
-          </ol>
+          <div class="field-label">详细逻辑</div>
+          <ul class="list">
+            <li>场次列表：展示全部线下场次，支持按状态、时间、关键词筛选</li>
+            <li>新增场次：配置场次名称、说明、时间区间、关联商品池、订单渠道</li>
+            <li>编辑场次：支持修改基础信息与状态（启用/禁用）</li>
+            <li>场次配置完成后生成对应回填单二维码/链接</li>
+            <li>禁用场次后，用户端不可继续提交新回填单</li>
+          </ul>
+        </div>
+        <div class="field-group" style="margin-top:12px;">
+          <div class="field-label">交互设计</div>
+          <ul class="list">
+            <li>列表区与配置区分栏布局，减少运营切换成本</li>
+            <li>关键字段（场次名称、时间、商品池）提供必填校验</li>
+            <li>状态操作（启用/禁用）二次确认，避免误操作</li>
+          </ul>
+        </div>
+        <div class="field-group" style="margin-top:12px;">
+          <div class="field-label">数据流向</div>
+          <pre style="background:#f5f5f5;padding:12px;border-radius:6px;font-size:12px;overflow-x:auto;">
+运营配置场次信息 → 后台保存场次配置
+→ 生成回填单入口（二维码/链接）→ 用户端使用</pre>
+        </div>
+      </div>
+
+      <div class="feature-module" id="admin_back_form_admin">
+        <h3>5.2.2 快闪店-回填单管理 <button class="highlight-btn" onclick="highlightFeature('admin_back_form_admin')">查看原型</button></h3>
+        <p class="meta"><strong>功能描述</strong>：运营对用户提交的回填单进行列表管理与审核处理。</p>
+        <div class="field-group">
+          <div class="field-label">详细逻辑</div>
+          <ul class="list">
+            <li>回填单列表展示：回填单编号、场次、用户信息、提交时间、审核状态</li>
+            <li>支持筛选与搜索：场次、手机号、小票号、状态、日期区间</li>
+            <li>审核详情页：展示商品信息、收货地址、小票信息、提交记录</li>
+            <li>审核操作：通过进入后续履约流程；驳回必须填写驳回原因并回写状态</li>
+            <li>支持导出列表用于线下对账</li>
+          </ul>
+        </div>
+        <div class="field-group" style="margin-top:12px;">
+          <div class="field-label">交互设计</div>
+          <ul class="list">
+            <li>列表支持快捷筛选与批量导出</li>
+            <li>审核按钮与状态标签区分明显（待审核/已通过/已驳回）</li>
+            <li>驳回时强制填写原因，保证可追溯性</li>
+          </ul>
+        </div>
+        <div class="field-group" style="margin-top:12px;">
+          <div class="field-label">数据流向</div>
+          <pre style="background:#f5f5f5;padding:12px;border-radius:6px;font-size:12px;overflow-x:auto;">
+用户提交回填单 → 后台列表入库
+→ 运营审核（通过/驳回）→ 更新回填单状态</pre>
+        </div>
+      </div>
+
+      <!-- App 端模块（新增） -->
+      <h3 style="margin-top:32px;">5.3 App 端（新增）</h3>
+      
+      <div class="feature-module" id="app_order_list">
+        <h3>5.3.1 快闪店订单列表 <button class="highlight-btn" onclick="highlightFeature('app_order_list')">查看原型</button></h3>
+        <p class="meta"><strong>功能描述</strong>：在 App"我的订单"页面提供快闪店订单列表展示，用户可以查看所有通过快闪店回填单生成的订单。</p>
+        <div class="field-group">
+          <div class="field-label">详细逻辑</div>
+          <ul class="list">
+            <li>用户进入 App "我的订单" → 点击"快闪店"子 Tab</li>
+            <li>页面加载后，基于用户 ID 拉取该用户的所有快闪店订单</li>
+            <li>订单按下单时间倒序排列</li>
+            <li>支持按订单状态筛选：全部、待支付、待发货、待收货、待评价</li>
+            <li>支持业务分类 Tab 切换：全部、快闪店、商城、其他</li>
+            <li>订单卡片展示完整商品列表、物流信息（已发货状态）</li>
+            <li>提供"售后服务"按钮</li>
+            <li>分页加载：默认加载 10 条，上拉加载更多</li>
+            <li>下拉刷新：支持刷新订单列表</li>
+            <li>空状态：无订单时展示"暂无快闪店订单"</li>
+          </ul>
+        </div>
+        <div class="field-group" style="margin-top:12px;">
+          <div class="field-label">交互设计</div>
+          <ul class="list">
+            <li>顶部固定导航栏，包含返回按钮和标题</li>
+            <li>订单状态 Tab 横向滚动，选中态高亮</li>
+            <li>业务分类 Tab 第二行展示，支持快速切换</li>
+            <li>订单卡片白色圆角设计，有阴影效果</li>
+            <li>操作按钮固定底部，点击反馈明确</li>
+            <li>物流信息展开/收起动画流畅</li>
+          </ul>
+        </div>
+        <div class="field-group" style="margin-top:12px;">
+          <div class="field-label">数据流向</div>
+          <pre style="background:#f5f5f5;padding:12px;border-radius:6px;font-size:12px;overflow-x:auto;">
+用户进入快闪店订单页面 → 拉取用户订单列表
+→ 按状态筛选/分页加载 → 展示订单卡片
+→ 点击售后服务 → 跳转售后流程</pre>
         </div>
       </div>
     </div>
@@ -461,74 +300,104 @@
     <div class="card">
       <h2>6. 业务流程图</h2>
       
-      <h3>6.1 用户下单校验流程</h3>
+      <h3>6.1 用户端流程</h3>
       <div class="mermaid">
 flowchart TD
-    A[用户在客户端提交订单] --> B[系统接收下单请求]
-    B --> C[获取用户人群包信息<br/>会员等级/标签等]
-    C --> D[获取购物车商品信息<br/>SPU/SKU 列表]
-    D --> E[查询匹配的限购策略<br/>商品 + 人群 + 时间范围]
-    E --> F{找到匹配策略？}
-    F -->|否 | G[继续正常下单流程]
-    F -->|是 | H[计算策略冲突<br/>取最小限购值]
-    H --> I[检查用户历史购买量<br/>已完成 + 待支付订单]
-    I --> J[计算本次购买总量]
-    J --> K{购买量 ≤ 限购值？}
-    K -->|是 | L[校验通过<br/>继续下单流程]
-    K -->|否 | M[校验失败<br/>返回限购提示文案]
-    M --> N[客户端显示失败提示<br/>用户无法继续下单]
-    N --> O[记录拦截日志<br/>策略 ID+ 用户 + 商品 + 时间]
+    A[用户扫码进入] --> B[选择商品]
+    B --> C[选择收货地址]
+    C --> D[填写小票信息]
+    D --> E{校验通过?}
+    E -->|否| F[提示补充]
+    E -->|是| G[提交回填单]
+    G --> H{提交成功?}
+    H -->|否| I[显示错误提示]
+    I --> D
+    H -->|是| J[展示成功提示]
+      </div>
+      
+      <h3 style="margin-top:24px;">6.2 运营端流程</h3>
+      <div class="mermaid">
+flowchart TD
+    A[运营查看回填单列表] --> B[选择待审核回填单]
+    B --> C[查看详情]
+    C --> D{审核操作}
+    D -->|通过| E[生成正式订单]
+    D -->|驳回| F[填写驳回原因]
+    E --> G[完成]
+    F --> H[通知用户重新提交]
+      </div>
+      
+      <h3 style="margin-top:24px;">6.3 App 订单查看流程</h3>
+      <div class="mermaid">
+flowchart TD
+    A[用户打开 App] --> B[进入我的订单]
+    B --> C[点击快闪店 Tab]
+    C --> D[加载订单列表]
+    D --> E{是否有订单?}
+    E -->|否| F[展示空状态]
+    E -->|是| G[展示订单卡片]
+    G --> H[点击售后服务]
+    H --> I[跳转售后流程]
       </div>
     </div>
 
     <div class="card">
       <h2>7. 异常与边界处理</h2>
       <ul class="list">
-        <li>非法时间范围（开始>=结束）禁止保存策略</li>
-        <li>单策略限购数<=0 或超阈值（9999）校验</li>
+        <li><strong>网络异常</strong>：用户提交时网络中断，提示"网络不稳定，请检查网络后重试"，保留用户已填写内容</li>
+        <li><strong>重复提交</strong>：系统校验小票号唯一性，已存在则提示"该小票号已提交，请勿重复提交"</li>
+        <li><strong>商品下架</strong>：线下场次期间商品下架，已选择商品不可删除，但标记为"已下架"，提交时提示"包含已下架商品"</li>
+        <li><strong>线下场次过期</strong>：用户访问已过期线下场次，展示"线下场次已结束"提示，不可提交</li>
+        <li><strong>图片上传失败</strong>：提示上传失败原因，支持重试上传</li>
+        <li><strong>订单列表加载失败</strong>：展示错误提示，提供"重新加载"按钮</li>
+        <li><strong>上拉加载更多失败</strong>：提示"加载失败，点击重试"，不中断当前列表展示</li>
+        <li><strong>下拉刷新超时</strong>：提示"刷新失败，请检查网络"，恢复原始状态</li>
       </ul>
     </div>
 
     <div class="card">
       <h2>8. 数据追踪与埋点</h2>
-      <p>无</p>
+      <table>
+        <tr><th>事件</th><th>描述</th><th>参数</th></tr>
+        <tr><td>page_view</td><td>页面浏览</td><td>线下场次 ID、来源</td></tr>
+        <tr><td>product_select</td><td>商品选择</td><td>商品 ID、数量</td></tr>
+        <tr><td>address_select</td><td>地址选择</td><td>地址 ID</td></tr>
+        <tr><td>receipt_input</td><td>小票信息填写</td><td>小票号、照片数</td></tr>
+        <tr><td>form_submit</td><td>表单提交</td><td>状态（成功/失败）</td></tr>
+        <tr><td>review_pass</td><td>审核通过</td><td>回填单 ID</td></tr>
+        <tr><td>review_reject</td><td>审核驳回</td><td>回填单 ID、原因</td></tr>
+        <tr><td>app_order_view</td><td>App 订单列表浏览</td><td>用户 ID、订单状态</td></tr>
+        <tr><td>app_after_sale_click</td><td>点击售后服务</td><td>订单ID、订单状态</td></tr>
+      </table>
     </div>
 
     <div class="card">
       <h2>9. 未来演进规划</h2>
-      <p>无</p>
+      <table>
+        <tr><th>阶段</th><th>功能</th><th>描述</th></tr>
+        <tr><td>v1.3</td><td>订单详情页</td><td>新增订单详情展示，包含完整商品列表、物流信息、售后流程</td></tr>
+        <tr><td>v1.4</td><td>批量导入</td><td>支持运营后台批量导入回填单数据</td></tr>
+        <tr><td>v1.5</td><td>数据统计</td><td>新增回填单数据统计与可视化报表</td></tr>
+      </table>
     </div>
 
     <div class="card">
       <h2>10. 附件</h2>
-      <p>无</p>
+      <ul class="list">
+        <li>参考回填单样式：form.png（需用户提供）</li>
+        <li>愚公互动活动平台接口文档（待补充）</li>
+        <li>App 订单列表参考图：IMG_3648.jpg</li>
+      </ul>
     </div>
   </div>
 
   <script>
     mermaid.initialize({ startOnLoad: true });
     
-    // PRD 与原型联动功能
     function highlightFeature(featureId) {
-      console.log('Sending highlight message for feature:', featureId);
-      
-      // 向父窗口发送高亮消息 - 修复 file://协议下的 postMessage 问题
-      if (window.parent && window.parent !== window) {
-        try {
-          // 使用 '*' 作为目标源，适配本地文件访问场景
-          window.parent.postMessage({
-            action: 'highlight',
-            featureId: featureId
-          }, '*');
-          console.log('Highlight message sent successfully:', featureId);
-        } catch (error) {
-          console.error('Failed to send highlight message:', error);
-          // 降级处理：显示提示信息
-          alert('请在主控文档（index.html）中打开以查看原型联动效果\n功能点：' + featureId);
-        }
-      } else {
-        // 如果不在 iframe 中，直接显示提示
-        alert('请在主控文档中打开以查看原型联动效果\n功能点：' + featureId);
+      // 发送消息给父窗口，触发原型高亮
+      if (window.parent !== window) {
+        window.parent.postMessage({ type: 'prd-focus', id: featureId }, '*');
       }
     }
   </script>
