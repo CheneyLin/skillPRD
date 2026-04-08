@@ -265,17 +265,10 @@ flowchart TD
 
 ## 8. 数据追踪与埋点
 
-| 事件 | 描述 | 参数 |
-| --- | --- | --- |
-| page_view | 页面浏览 | 线下场次 ID、来源 |
-| product_select | 商品选择 | 商品ID、数量 |
-| address_select | 地址选择 | 地址ID |
-| receipt_input | 小票信息填写 | 小票号、照片数 |
-| form_submit | 表单提交 | 状态（成功/失败） |
-| review_pass | 审核通过 | 回填单ID |
-| review_reject | 审核驳回 | 回填单ID、原因 |
-| app_order_view | App 订单列表浏览 | 用户 ID、订单状态 |
-| app_after_sale_click | 点击售后服务 | 订单ID、订单状态 |
+| 页面标识/page_name | 功能标识/mod_type | 备注 |
+| :--- | :--- | :--- |
+| h5 | form_submit | "提交"按钮	愚公模块 类型 |
+
 
 ## 9. 未来演进规划
 | 阶段 | 功能 | 描述 |
