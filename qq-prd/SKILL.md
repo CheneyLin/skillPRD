@@ -27,7 +27,7 @@ description: "通过对话式需求收集、PRD 骨架起草、HTML 原型生成
 
 - 兼容用户任意形式的需求输入（一句话描述、截图、手绘图、口语化表述等），无需用户调整格式。
 
-- 接受用户提供 **Product Requirements Form** 需求表格，用于初始化项目，结构模板见 `/reference/prf_template.md`
+- 接受用户提供 **Product Requirements Form** 需求表格，用于初始化项目，结构模板见 `/references/prf_template.md`
 
 - 若用户没有提供需求表格，不要求用户提供，按以后的流程进行对话式需求评估。
 
@@ -35,7 +35,7 @@ description: "通过对话式需求收集、PRD 骨架起草、HTML 原型生成
 
 接收用户初步需求后，**必须将以下7个关键维度的评估结果清晰呈现给用户**，明确告知当前需求的清晰项与缺失项，引导用户补充完善：
 
-1. **背景/痛点**：需求提出的初衷的是什么？当前存在哪些未解决的问题？（必选，核心前提）
+1. **背景/痛点**：需求提出的初衷是什么？当前存在哪些未解决的问题？（必选，核心前提）
 
 2. **业务目标**：需求落地后，期望达成的具体业务效果是什么？（必选，核心导向）
 
@@ -81,7 +81,7 @@ description: "通过对话式需求收集、PRD 骨架起草、HTML 原型生成
 
 - `v1.0/prd_html/` ：存放**HTML格式PRD文档**（与**Markdown格式 PRD 源文档**同步），命名规范：`prd_v1.0.html`。
 
-- `v1.0/prototype_html/`：存放所有高保真  **HTML格式 原型文件**，按产品形态分文件管理，命名规范：`admin_v1.0.html`（后台）、`h5_v1.0.html`（移动端）、`app_v1.0.html`（app端）,子界面文件使用文件夹管理，如`admin_pages/login.html`、`app_pages/register.html`，通用文件使用`assets`文件夹管理，如`assets/app_styles.css`、`assets/app_scripts.js`。
+- `v1.0/prototype_html/`：存放所有高保真 **HTML格式 原型文件**，按产品形态分文件管理，命名规范：`admin_prototype_v1.0.html`（后台端/PC Web）、`app_prototype_v1.0.html`（移动端/Mobile Web），子界面文件使用文件夹管理，如`admin_pages/login.html`、`app_pages/register.html`，通用文件使用`assets`文件夹管理，如`assets/app_styles.css`、`assets/app_scripts.js`。
 
 - `v1.0/assets/`：存放Mermaid流程图、导出图片、附件（Excel/CSV数据字典、需求原始文稿、参考资料等）。
 
@@ -125,11 +125,11 @@ description: "通过对话式需求收集、PRD 骨架起草、HTML 原型生成
 
 ### 4.1 原型规范
 
-1. **严格使用模板**：**必须参考 `/template/v1.0/prototype_html/admin_prototype_v1.0.html`（后台端）和 `/template/v1.0/prototype_html/app_prototype_v1.0.html`（移动端/App端）标准模板结构**，**默认参考 `/assets/vercel/DESIGN.md` 设计规范**，确保样式统一、专业。
+1. **严格使用模板**：**必须参考 `/template/v1.0/prototype_html/admin_prototype_v1.0.html`（后台端/PC Web）和 `/template/v1.0/prototype_html/app_prototype_v1.0.html`（移动端/Mobile Web）标准模板结构**，**默认参考 `/assets/vercel/DESIGN.md` 设计规范**，确保样式统一、专业。
 
-2. **手机端产品（App/Mobile Web）**：适配移动端交互习惯。通过固定尺寸手机模拟外框（包含状态栏、底部导航等视觉元素）内嵌iframe技术展示子页面，支持全局视图和单独视频 切换，并提供子页面切换按钮组。
+2. **移动端/Mobile Web**：适配移动端交互习惯。通过固定尺寸手机模拟外框（包含状态栏、底部导航等视觉元素）内嵌iframe技术展示子页面，支持全局视图和单独视频 切换，并提供子页面切换按钮组。
 
-3. **PC 端产品（后台管理/PC Web）**：采用多级菜单，二次页面尽量使用弹窗展示；内嵌iframe技术展示子页面。
+3. **后台端/PC Web**：采用多级菜单，二次页面尽量使用弹窗展示；内嵌iframe技术展示子页面。
 
 4. 必须包含核心交互状态（如默认页、弹窗展开、操作成功/失败提示、空状态等）；需要通过原生 JavaScript 或 URL Hash（`#page1`）实现页面切换，模拟真实操作流程。
 
@@ -188,13 +188,13 @@ description: "通过对话式需求收集、PRD 骨架起草、HTML 原型生成
 
 > **🚨 强制指令**：严格使用 `/template/prd_html/prd_v1.0.html` 模板结构和样式，确保排版、色彩、表格样式一致。
 
-#### 原型适配联动代码参考 - 后台/PC web（保存路径-v1.0示例：专属根文件夹/v1.0/prototype_html/admin_prototype_v1.0.html）
+#### 原型适配联动代码参考 - 后台端/PC Web（保存路径-v1.0示例：专属根文件夹/v1.0/prototype_html/admin_prototype_v1.0.html）
 
 > **🚨 强制指令**：严格使用 `/template/v1.0/prototype_html/admin_prototype_v1.0.html` 模板结构和样式，确保 UI 风格统一。
 
 #### 原型适配联动代码参考-App（保存路径-v1.0示例：专属根文件夹/v1.0/prototype_html/app_prototype_v1.0.html）
 
-> **🚨 强制指令**：严格使用 `/template/v1.0/prototype_html/app_prototype_v1.0.html` 模板结构和样式，确保移动端原型规范一致。
+> **🚨 强制指令**：严格使用 `/template/v1.0/prototype_html/app_prototype_v1.0.html` 模板结构和样式，确保移动端/Mobile Web 原型规范一致。
 
 说明：上述代码可直接复制使用，需根据实际项目名称、版本及功能标识调整对应内容；所有文件路径需严格遵循文件夹架构，确保联动功能正常生效。
 
@@ -205,7 +205,7 @@ description: "通过对话式需求收集、PRD 骨架起草、HTML 原型生成
 
     - 项目名称旁设置版本切换下拉菜单，支持选择所有已迭代版本（如v1.0、v1.1），点击后左侧PRD文档区、右侧原型区同步切换至对应版本，无页面刷新。
 
-    - 右侧设置产品形态切换按钮组，支持快速切换后台、App等不同形态的原型，适配多产品形态需求。
+    - 右侧设置产品形态切换按钮组，支持快速切换后台端/PC Web、移动端/Mobile Web等不同形态的原型，适配多产品形态需求。
 
     - 样式要求：导航栏固定在页面顶部，不随滚动消失；背景色与PRD主色调统一，边框底部简洁，无冗余装饰，适配所有主流屏幕尺寸。
 
@@ -218,7 +218,7 @@ description: "通过对话式需求收集、PRD 骨架起草、HTML 原型生成
 
     - 左侧区域（PRD文档区）：通过iframe嵌入当前选中版本的PRD文档（路径示例：`./v1.0/prd_html/prd_v1.0.html`），确保PRD原有排版、文件夹导航、流程图等功能正常展示，无样式错乱。
 
-    - 右侧区域（原型区）：通过iframe嵌入当前选中版本的高保真原型（路径示例：`./v1.0/prototype_html/admin_prototype_v1.0.html` 或 `./v1.0/prototype_html/app_prototype_v1.0.html`），保留原型原有交互功能和Focus模式，适配后台/PC Web、App/Mobile Web原型的正常展示。
+    - 右侧区域（原型区）：通过iframe嵌入当前选中版本的高保真原型（路径示例：`./v1.0/prototype_html/admin_prototype_v1.0.html` 或 `./v1.0/prototype_html/app_prototype_v1.0.html`），保留原型原有交互功能和Focus模式，适配后台端/PC Web、移动端/Mobile Web原型的正常展示。
 
 3. **左右联动功能（核心）**：
 
@@ -313,7 +313,7 @@ window.addEventListener('message', function(e) {
 
 3. 确保原型支持通过 postMessage 接收外部指令（如定位标识、切换 Focus 模式），兼容不同版本原型的联动逻辑，无跨域问题。
 
-4. 后台/PC Web、App/Mobile Web 原型的原有规范不变，需确保嵌入主控文档右侧区域后，界面完整、交互正常，适配分栏宽度调整。
+4. 后台端/PC Web、移动端/Mobile Web 原型的原有规范不变，需确保嵌入主控文档右侧区域后，界面完整、交互正常，适配分栏宽度调整。
 
 ### 6.4 交付检查
 
@@ -327,13 +327,13 @@ window.addEventListener('message', function(e) {
 
 - [ ] 左右联动功能正常：左侧滚动至某功能逻辑模块时，右侧原型自动定位并高亮对应模块；点击左侧PRD功能模块的“查看原型”按钮，可手动触发右侧原型对应模块的定位与高亮。
 
-- [ ] 原型使用iframe技术内嵌子界面，后台/PC Web原型实现完整框架和全交互功能，App/Mobile Web原型嵌入纯HTML实现的手机模拟外框，适配主控文档右侧区域。
+- [ ] 原型使用iframe技术内嵌子界面，后台端/PC Web原型实现完整框架和全交互功能，移动端/Mobile Web原型嵌入纯HTML实现的手机模拟外框，适配主控文档右侧区域。
 
 - [ ] 原型Focus模式正常，可接收主控文档指令实现高亮定位。
 
 - [ ] 异常情况（断网、空数据、权限不足）已补充到PRD文档中。
 
-- [ ] App/Mobile Web原型展示手机模拟外框，固定展示子界面尺寸为375*812，支持全局视图/单独视图切换，单独视图模式下通过子界面按钮组切换指定子界面。
+- [ ] 移动端/Mobile Web原型展示手机模拟外框，固定展示子界面尺寸为375*812，支持全局视图/单独视图切换，单独视图模式下通过子界面按钮组切换指定子界面。
 
 ---
 
@@ -347,8 +347,8 @@ window.addEventListener('message', function(e) {
 |---|---|---|
 | `/template/v1.0/prd_md/prd_v1.0.md` | PRD Markdown 源文档 | 步骤三：生成 `prd_md/prd_vX.X.md`，作为 PRD 内容骨架 |
 | `/template/v1.0/prd_html/prd_v1.0.html` | PRD HTML 文档样式 | 步骤三、六：生成 `prd_html/prd_vX.X.html`，确保排版、表格、卡片样式统一 |
-| `/template/v1.0/prototype_html/admin_prototype_v1.0.html` | 后台端原型样式 | 步骤四、六：生成 PC Web/后台管理原型，确保 UI 风格、交互一致 |
-| `/template/v1.0/prototype_html/app_prototype_v1.0.html` | 移动端原型样式 | 步骤四、六：生成 App/Mobile Web 原型，确保移动端规范统一 |
+| `/template/v1.0/prototype_html/admin_prototype_v1.0.html` | 后台端/PC Web原型样式 | 步骤四、六：生成 PC Web/后台管理原型，确保 UI 风格、交互一致 |
+| `/template/v1.0/prototype_html/app_prototype_v1.0.html` | 移动端/Mobile Web原型样式 | 步骤四、六：生成 App/Mobile Web 原型，确保移动端规范统一 |
 | `/template/index.html` | 主控文档框架 | 步骤六：生成根文件夹 `index.html`，实现版本切换、左右分栏、PRD 与原型联动 |
 
 ### 模板使用原则
