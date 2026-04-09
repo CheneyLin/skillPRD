@@ -1,8 +1,8 @@
 # Product Requirements Form
 
-## 项目名称
+## 项目名称/标识
 
-<project_name>
+<project_name>/<project_identifier>
 
 ## 需求描述
 

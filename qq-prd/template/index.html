@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <title>快闪店预售商品回填单 - PRD 与原型主控</title>
+  <title>电子吧唧 2 期 - PRD 与原型主控</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     :root {
@@ -215,41 +215,17 @@
       height: 20px;
       background: var(--border-light);
     }
-    
-    .log-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      color: var(--muted);
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 500;
-      padding: 6px 14px;
-      border-radius: var(--btn-radius);
-      transition: all 0.15s;
-    }
-    
-    .log-link:hover {
-      color: var(--fg);
-      box-shadow: 0px 0px 0px 1px var(--border);
-    }
-    
-    .log-link:focus {
-      outline: none;
-      box-shadow: 0px 0px 0px 1px var(--fg), 0px 0px 0px 3px var(--focus);
-    }
   </style>
 </head>
 <body>
   <div class="header">
-    <span class="header-title">快闪店预售商品回填单</span>
-    <span class="version-badge">v1.2</span>
+    <span class="header-title">电子吧唧 2 期</span>
+    <span class="version-badge">v1.0</span>
     <div class="divider"></div>
     <div class="controls">
       <div class="product-btns">
-        <button class="product-btn active" data-product="h5" onclick="switchProduct('h5')">H5 回填单</button>
+        <button class="product-btn active" data-product="app" onclick="switchProduct('app')">APP 端</button>
         <button class="product-btn" data-product="admin" onclick="switchProduct('admin')">运营后台</button>
-        <button class="product-btn" data-product="app" onclick="switchProduct('app')">App 订单</button>
       </div>
       <div class="divider"></div>
       <div class="width-control">
@@ -261,20 +237,18 @@
       <div class="width-control">
         <label for="versionSelect">版本</label>
         <select id="versionSelect" onchange="switchVersion(this.value)">
-          <option value="1.0">v1.0</option>
-          <option value="1.1">v1.1</option>
-          <option value="1.2" selected>v1.2</option>
+          <option value="1.0" selected>v1.0</option>
         </select>
       </div>
     </div>
   </div>
   <div class="main">
     <div class="left">
-      <iframe id="prdFrame" class="frame" src="./v1.2/prd_html/prd_v1.2.html"></iframe>
+      <iframe id="prdFrame" class="frame" src="./v1.0/prd_html/prd_v1.0.html"></iframe>
     </div>
     <div class="split" id="splitter" title="拖动调整左右宽度"></div>
     <div class="right">
-      <iframe id="protoFrame" class="frame" src="./v1.2/prototype_html/h5_v1.2.html"></iframe>
+      <iframe id="protoFrame" class="frame" src="./v1.0/prototype_html/app_prototype_v1.0.html"></iframe>
     </div>
   </div>
 
@@ -287,8 +261,8 @@
     const leftPane = document.querySelector('.left');
     const rightPane = document.querySelector('.right');
     const splitter = document.getElementById('splitter');
-    let currentProduct = 'h5';
-    let currentVersion = '1.2';
+    let currentProduct = 'app';
+    let currentVersion = '1.0';
     let pendingHighlightId = null;
 
     // iframe 切换到另一个原型后，等待加载完成再发送高亮指令
@@ -303,12 +277,10 @@
       // 切换 PRD 文档
       prdFrame.src = `./v${version}/prd_html/prd_v${version}.html`;
       // 切换原型文件
-      if (currentProduct === 'h5') {
-        protoFrame.src = `./v${version}/prototype_html/h5_v${version}.html`;
+      if (currentProduct === 'app') {
+        protoFrame.src = `./v${version}/prototype_html/app_prototype_v${version}.html`;
       } else if (currentProduct === 'admin') {
-        protoFrame.src = `./v${version}/prototype_html/admin_v${version}.html`;
-      } else {
-        protoFrame.src = `./v${version}/prototype_html/app_v${version}.html`;
+        protoFrame.src = `./v${version}/prototype_html/admin_prototype_v${version}.html`;
       }
     }
 
@@ -318,12 +290,10 @@
         btn.classList.remove('active');
         if (btn.dataset.product === product) btn.classList.add('active');
       });
-      if (product === 'h5') {
-        protoFrame.src = `./v${currentVersion}/prototype_html/h5_v${currentVersion}.html`;
+      if (product === 'app') {
+        protoFrame.src = `./v${currentVersion}/prototype_html/app_prototype_v${currentVersion}.html`;
       } else if (product === 'admin') {
-        protoFrame.src = `./v${currentVersion}/prototype_html/admin_v${currentVersion}.html`;
-      } else {
-        protoFrame.src = `./v${currentVersion}/prototype_html/app_v${currentVersion}.html`;
+        protoFrame.src = `./v${currentVersion}/prototype_html/admin_prototype_v${currentVersion}.html`;
       }
     }
 
@@ -351,26 +321,26 @@
     // 监听来自 PRD 的消息，联动原型高亮
     window.addEventListener('message', (e) => {
       const data = e.data || {};
-      if (data.type === 'prd-focus' && data.id) {
-        const fid = String(data.id);
-        let targetProduct = 'h5';
+      
+      // 支持两种消息格式：action: 'highlight' 或 type: 'prd-focus'
+      if ((data.action === 'highlight' || data.type === 'prd-focus') && (data.featureId || data.id)) {
+        const fid = String(data.featureId || data.id);
+        let targetProduct = 'app';
         
         // 根据功能标识前缀判断目标产品形态
         if (fid.startsWith('admin_')) {
           targetProduct = 'admin';
         } else if (fid.startsWith('app_')) {
           targetProduct = 'app';
-        } else if (fid.startsWith('h5_')) {
-          targetProduct = 'h5';
         }
         
         // 如果当前 iframe 展示的不是对应原型，则先切换再高亮
         if (targetProduct !== currentProduct) {
-          pendingHighlightId = data.id;
+          pendingHighlightId = fid;
           switchProduct(targetProduct);
           return;
         }
-        protoFrame.contentWindow.postMessage({ action: 'highlight', featureId: data.id }, '*');
+        protoFrame.contentWindow.postMessage({ action: 'highlight', featureId: fid }, '*');
       }
     });
   </script>
