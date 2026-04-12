@@ -125,15 +125,17 @@ description: "通过对话式需求收集、PRD 骨架起草、HTML 原型生成
 
 ### 4.1 原型规范
 
-1. **严格使用模板**：**必须参考 `/template/v1.0/prototype_html/admin_prototype_v1.0.html`（后台端/PC Web）和 `/template/v1.0/prototype_html/app_prototype_v1.0.html`（移动端/Mobile Web）标准模板结构**，**默认参考 `/assets/vercel/DESIGN.md` 设计规范**，确保样式统一、专业。
+1. **严格使用本地资源初始化**：**必须先复制模板框架的代码到项目根文件夹中**，仅使用`/template/v1.0/assets/`文件夹下的本地资源文件完成初版原型HTML的生成工作
 
-2. **移动端/Mobile Web**：适配移动端交互习惯。通过固定尺寸手机模拟外框（包含状态栏、底部导航等视觉元素）内嵌iframe技术展示子页面，支持全局视图和单独视频 切换，并提供子页面切换按钮组。
+2. **严格使用模板**：**必须参考 `/template/v1.0/prototype_html/admin_prototype_v1.0.html`（后台端/PC Web）和 `/template/v1.0/prototype_html/app_prototype_v1.0.html`（移动端/Mobile Web）标准模板结构**，**默认参考 `/assets/vercel/DESIGN.md` 设计规范**，确保样式统一、专业。
 
-3. **后台端/PC Web**：采用多级菜单，二次页面尽量使用弹窗展示；内嵌iframe技术展示子页面。
+3. **移动端/Mobile Web**：适配移动端交互习惯。通过固定尺寸手机模拟外框（包含状态栏、底部导航等视觉元素）内嵌iframe技术展示子页面，支持全局视图和单独视频 切换，并提供子页面切换按钮组。
 
-4. 必须包含核心交互状态（如默认页、弹窗展开、操作成功/失败提示、空状态等）；需要通过原生 JavaScript 或 URL Hash（`#page1`）实现页面切换，模拟真实操作流程。
+4. **后台端/PC Web**：采用多级菜单，二次页面尽量使用弹窗展示；内嵌iframe技术展示子页面。
 
-5. **沙盒锁定支持 (Focus Mode)**：编写原生 JavaScript 时，必须加入 URL 参数解析逻辑（如 `?focus=feature_id`）；处于 Focus 模式时，使用FadeIn动画提示对应功能点，为后续 PRD 嵌入原型、实现"功能交互高亮展示"奠定基础。
+5. 必须包含核心交互状态（如默认页、弹窗展开、操作成功/失败提示、空状态等）；需要通过原生 JavaScript 或 URL Hash（`#page1`）实现页面切换，模拟真实操作流程。
+
+6. **沙盒锁定支持 (Focus Mode)**：使用postMessage或URL hash技术实现功能点的联动切换和高亮展示，编写原生 JavaScript 时，加入 URL 参数解析逻辑（如 `?focus=feature_id`）；处于 Focus 模式时，使用FadeIn动画提示对应功能点，为后续 PRD 嵌入原型、实现"功能交互高亮展示"奠定基础。
 
 ### 4.2 💡 必须使用 DESIGN.md
 
@@ -141,9 +143,9 @@ description: "通过对话式需求收集、PRD 骨架起草、HTML 原型生成
 
 用户可以引入其他符合 Google DESIGN.md 规范的规范。如果本地未提供，可在 https://github.com/VoltAgent/awesome-design-md 搜索下载。
 
-### 4.3 原型审查与 PRD 双向同步更新 (核心迭代循环) 【等待用户反馈】
+### 4.3 原型审查与 PRD 同步更新 (核心迭代循环) 【等待用户反馈】
 
-- 当用户手工修改Markdown格式 PRD 源文档后，搜索“**同步PRD**”指令，完成HTML格式 PRD 源文档和HTML格式原型的同步工作，实现PRD与原型双向同步。
+- 当用户手工修改Markdown格式 PRD 源文档后，处理“**同步PRD**”指令，完成HTML格式 PRD 源文档和HTML格式原型的同步工作，实现PRD与原型同步。
 
 - 将生成的**HTML格式 原型文件**代码或预览效果呈现给用户，引导用户全面审查。
 
