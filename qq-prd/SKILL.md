@@ -81,9 +81,9 @@ description: "通过对话式需求收集、PRD 骨架起草、HTML 原型生成
 
 - `v1.0/prd_html/` ：存放**HTML格式PRD文档**（与**Markdown格式 PRD 源文档**同步），命名规范：`prd_v1.0.html`。
 
-- `v1.0/prototype_html/`：存放所有高保真 **HTML格式 原型文件**，按产品形态分文件管理，命名规范：`admin_prototype_v1.0.html`（后台端/PC Web）、`app_prototype_v1.0.html`（移动端/Mobile Web），子界面文件使用文件夹管理，如`admin_pages/login.html`、`app_pages/register.html`，通用文件使用`assets`文件夹管理，如`assets/app_styles.css`、`assets/app_scripts.js`。
+- `v1.0/prototype_html/`：存放所有高保真 **HTML格式 原型文件**，按产品形态分文件管理，命名规范：`admin_prototype_v1.0.html`（后台端/PC Web）、`app_prototype_v1.0.html`（移动端/Mobile Web），子界面文件使用文件夹管理，如`admin_pages/login.html`、`app_pages/register.html`。
 
-- `v1.0/assets/`：存放Mermaid流程图、导出图片、附件（Excel/CSV数据字典、需求原始文稿、参考资料等）。
+- `assets/`：存放Mermaid流程图、导出图片、附件（Excel/CSV数据字典、需求原始文稿、参考资料等）、app端静态资源、后台静态资源等。
 
 - `history/` ：存放项目修改历史日志，方便多Agent协同回溯，命名规范：大模型英文名称 + 日期 + 版本 + 摘要（例：`kimi_2026_03_27_v1.0_init.md`），同一版本按天按需多次更新，确保记录最后的修改状态，清理不重要的反复修改信息，确保简洁、完整、准确。
 
